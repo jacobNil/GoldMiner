@@ -5,16 +5,21 @@ import random, string
 
 # super class for rock and gold
 class Precious(object):
-    def __init__(self, index=0, width=700, height0=300, height1=500):
-        
+
+    def __init__(self,index=0,width=800,height=600):
         # height0 -- height1 define the undergound part, 
         # where the precious randomly distributed
-        self.x = random.randint(100, width)
-        self.y = random.randint(height0, height1)
+        self.margin = 50 # the margin of precious range
+        self.width, self.height = width, height
+        self.lBound = self.margin
+        self.rBound = self.width-self.margin
+        self.upBound = self.margin*6
+        self.loBound = self.height-self.margin
+        self.x=random.randint(self.lBound, self.rBound)
+        self.y=random.randint(self.upBound, self.loBound)
         self.index = index
         self.image = [None] * 4 # types of gold and rock are 4
         self.highestSpeed = 50
-
 
     # detect if it is clawed by the miner
     def beenClawed(self, other):
@@ -35,6 +40,10 @@ class Precious(object):
 
     def __eq__(self, other):
         if ((isinstance(other, Gold)) and 
+            (self.x == other.x) and 
+            (self.y == other.y)):
+            return True
+        elif ((isinstance(other, Rock)) and 
             (self.x == other.x) and 
             (self.y == other.y)):
             return True
@@ -69,7 +78,6 @@ class Gold(Precious):
 
         # the larger the index, the higher the value, 
         # the lower the speed in dragging
-        
         self.radius = (40+self.index*30)/2
         self.value = 50*2**self.index
         self.speed = (50 - self.index*10)
@@ -114,11 +122,10 @@ Rock:
 class Rock(Precious):
     def __init__(self, index):
         super().__init__(index)
-
         # the larger the index, the higher the value, 
         # the lower the speed in dragging
         self.value = 5*2*self.index
-        self.speed = (50 - self.index*10)
+        self.speed = (50-self.index*10)
         self.radius = 20+self.index*5
         self.loadImage()
 
@@ -180,27 +187,6 @@ class Rat(object):
     def drawRat(self, canvas):
         # draw rats here
         pass
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

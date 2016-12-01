@@ -4,6 +4,7 @@ from objects import Button
 from Precious import Precious, Gold, Rock
 
 from ScoreMode import ScoreMode
+import random, string
 
 #from PIL import Image, ImageTk
 
@@ -25,6 +26,7 @@ def init(data):
     data.timeMode = "Time Mode"
     data.helpMode = "Help"
     data.shopMode = "Shopping"
+    data.scoreModeTrans = "scoreModeTransition"
 
     data.originalMode = data.splashScreen # the strat mode
 
@@ -65,13 +67,18 @@ def keyPressed(event, data):
     elif (data.mode == data.timeMode):   cleanModeKeyPressed(event, data)
     elif (data.mode == data.helpMode):   helpKeyPressed(event, data)
     elif (data.mode == data.shopMode):   shopModeKeyPressed(event, data)
+    elif (data.mode == data.scoreModeTrans):
+        scoreModeTransHelpKeyPressed(event, data)
+
 
 def timerFired(data):
     if (data.mode == data.splashScreen): splashScreenTimerFired(data)
-    elif (data.mode == data.scoreMode):  data.game.helpTimerFired()
+    elif (data.mode == data.scoreMode):  data.game.helpTimerFired(data)
     elif (data.mode == data.timeMode):   cleanModeTimerFired(data)
     elif (data.mode == data.helpMode):   helpTimerFired(data)
     elif (data.mode == data.shopMode):   shopModeTimerFired(data)
+    elif (data.mode == data.scoreModeTrans): 
+        data.game.helpTimerFired(data)
 
 def redrawAll(canvas, data):
     if (data.mode == data.splashScreen): splashScreenRedrawAll(canvas, data)
@@ -79,43 +86,34 @@ def redrawAll(canvas, data):
     elif (data.mode == data.timeMode):   cleanModeRedrawAll(canvas, data)
     elif (data.mode == data.helpMode):   helpRedrawAll(canvas, data)
     elif (data.mode == data.shopMode):   shopModeRedrawAll(canvas, data)
+    elif (data.mode == data.scoreModeTrans): 
+        data.game.drawScoreModeTrans(canvas)
+
+
 
 ####################################
-# playGame: "scoreMode"
+# scoreModeTrans helper function
 ####################################
 
-def scoreModeMousePressed(event, data):
-    pass
-
-def scoreModeKeyPressed(event, data):
-    if (event.keysym == 'Down'):
-        pass
-        #do something here
-        # the claw should stick out
-        
-    elif (event.keysym == "r"):
-        data.mode = data.splashScreen
+# since this helper function should be able to create a new
+# object of score Mode game, but the object ScoreMode and the 
+# object ScoreModeTrans cannot import each other. So i have to use
+# helper function for now
+# ????!!!!!but this need to be worked on!!!!!!!!!!!
+def scoreModeTransHelpKeyPressed(event, data):
+    if data.game.isPreAccomplished:
+        if event.keysym == "p":
+            level = data.game.currLevel
+            score = data.game.currScore
+            data.game = ScoreMode(level+1, score)
+            data.mode = data.scoreMode
+                
+    if event.keysym == "h":
+        data.mode = data.helpMode
+    if event.keysym == "r":
         init(data)
 
-def scoreModeTimerFired(data):
-    data.score += 1
 
-def scoreModeRedrawAll(canvas, data):
-  
-    print("num of gold", len(data.scoreModeGold))
-
-    for gold in data.scoreModeGold:
-        gold.drawGold(canvas)
-
-
-    canvas.create_text(data.width/2, data.height/2-10,
-                       text="Score = " + str(data.score), font="Arial 20")
-    canvas.create_text(data.width/2, data.height/2+15,
-                       text="this is time mode", font="Arial 20")
-    canvas.create_text(data.width/2, data.height/2+40,
-                       text="Press 'h' for help!", font="Arial 20")
-    canvas.create_text(data.width/2, data.height/2+60,
-                       text="Press 'r' to reset!", font="Arial 20")
 
 ####################################
 # playGame: "cleanMode"

@@ -1,9 +1,10 @@
 # contain all necessary data and method for 
 # score mode of the game
-
+from tkinter import *
 from Precious import Gold, Rock
+from ScoreModeTrans import ScoreModeTrans
 
-import string, math
+import string, math, random
 
 class ScoreMode(object):
     ##########################################
@@ -12,17 +13,21 @@ class ScoreMode(object):
     def __init__(self, level=1, score=0, 
                  width=800, height=600):
         self.level = level
-        self.score = score
+        self.score = 0
+        self.isAccomplished = 0
         self.goal = [500, 1000, 2500]
         self.width, self.height = width, height
         # for time control
         self.timeRemaining = 60 # 60 senconds for each level
         self.msTime = 10
-        # for level check
-        self.firstLevelRequire = 500
-        self.secondLevelRequire = 1000
-        self.thirdLevelRequire = 2500
         # basic kinds of things underground
+        self.groundLineY = 100
+        self.ground = [None]*3
+
+        self.ground[0] = PhotoImage(file="image/ScoreMode/background1.gif")
+        self.ground[1] = PhotoImage(file="image/ScoreMode/background2.gif")
+        self.ground[2] = PhotoImage(file="image/ScoreMode/background3.gif")
+
         self.golds = []
         self.rocks = []
         self.diamonds = []
@@ -39,6 +44,8 @@ class ScoreMode(object):
         # the claw can rotate from 210 digree to 330 digree
         self.claw = Claw(self.minerX, self.minerY+10, 
                          self.width, self.height)
+        
+
         
     # use list to define the underground precious types and #
     # by using dictionary
@@ -91,22 +98,34 @@ class ScoreMode(object):
     ##########################################
     # control method
     ##########################################
-    def helpTimerFired(self):
+    def helpTimerFired(self, data):
         # !!!!!!when running out of time, need to check the score
-        # basic: time running
 
+        # basic: time running feature
         if (self.timeRemaining <= 0): 
-            return None
+            if self.score >= self.goal[self.level-1]:
+                self.isAccomplished = True
+                #print("isAccomplished=", self.isAccomplished)
+                #print("currscore=", self.score)
+                #print("score required",self.goal[self.level-1])
+
+            data.mode = data.scoreModeTrans
+            data.game = ScoreModeTrans(self.isAccomplished, self.score, self.level)
+
         self.msTime -= 1
         if (self.msTime) ==0 :
             self.timeRemaining -= 1
             self.msTime = 10
 
-        # when the claw is not stick out
         itemValue = self.claw.helpTimerFired(self.allPrecious)
+        # when the claw is not stick out
         if itemValue != None:
             self.score += itemValue
         #print("before",self.allPrecious)
+
+        # when item is clawed, this item should be removed from
+        # game mode, so the original item will disappear, and a 
+        # new one will be created and draw as attached to the claw
         if (self.claw.clawedItem!=None):
             for precious in self.allPrecious:
                 for item in precious:
@@ -119,6 +138,7 @@ class ScoreMode(object):
             data.mode = data.splashScreen
         elif event.keysym == "Down":
             self.claw.isClawStickOut = True
+
 
     ##########################################
     # draw method
@@ -134,6 +154,11 @@ class ScoreMode(object):
         self.drawScore(canvas)
 
     def drawBackground(self, canvas):
+        canvas.create_line(0, self.groundLineY, 
+                    self.width, self.groundLineY)
+        
+        canvas.create_image(self.width/2, self.height/2, 
+                            image=self.ground[self.level-1])
         pass
 
     # draw undergound precious
@@ -148,8 +173,8 @@ class ScoreMode(object):
             rat.drawRat(canvas)
 
     def drawTimer(self, canvas):
-        timeX, timeY = 750, 25
-        levelX, levelY = 750, 10
+        timeX, timeY = 750, 55
+        levelX, levelY = 750, 30
         alterBoxX0, alterBoxY0 = timeX+22, timeY-5
         alterBoxX1, alterBoxY1 = timeX+38, timeY+8
         timeText = "Time = " + str(self.timeRemaining) 
@@ -169,18 +194,20 @@ class ScoreMode(object):
         minerX, minerY = self.minerX, self.minerY
         minerR = self.minerR
         # just use that oval as miner for now...
-        canvas.create_oval(minerX-minerR, minerY-minerR,
-                           minerX+minerR, minerY+minerR, fill="cyan")
+        
     #draw score and goal of leve on the left top corner
     def drawScore(self, canvas):
-        scoreX, scoreY = 70, 10
-        goalX, goalY = 70, 35
+        scoreX, scoreY = 70, 30
+        goalX, goalY = 70, 55
         moneyText = "Money = $" + str(self.score)
         canvas.create_text(scoreX, scoreY, text=moneyText, 
                             font = "Corbel 20 bold")
         goalText = "Goal = $" + str(self.goal[self.level-1])
         canvas.create_text(goalX, goalY, text = goalText, 
                             font = "Corbel 20 bold")
+
+
+
 
 ##################################################################
 ##the class of Claw, with basic feature of stick out
@@ -216,6 +243,9 @@ class Claw(object):
         # about claw behavior
         self.isClawed = False
         self.clawedItem = None
+
+
+
 
     ##############################################################
     # draw method
@@ -285,7 +315,7 @@ class Claw(object):
     def drawClawedItem(self, canvas):
         # only deal with the conditon that sth is clawed
         if self.clawedItem == None:
-            return
+            return None
         elif (self.clawedItem != None):
             #print("drawing clawed item")
             itemR = self.clawedItem.radius
@@ -315,7 +345,7 @@ class Claw(object):
 
 
     def clawStickOut(self):
-        # check if the claw go something, 
+        # check if the claw got something, 
         # if it does, retract immediately
         if ((self.clawedItem!=None) and (self.clawStickSpeed>0)):
             self.clawStickSpeed = -self.clawStickSpeed
@@ -337,9 +367,10 @@ class Claw(object):
                     self.isClawStickOut = False
                     # get the
                     value = 0
-                    if self.clawedItem != None:
+                    if (self.clawedItem!=None):
                         value = self.clawedItem.value
                     self.clawedItem = None
+                    print("the current clawed=", self.clawedItem)
                     self.clawStickSpeed = -self.clawStickSpeed
                     return value
 
@@ -354,12 +385,12 @@ class Claw(object):
             value = self.clawStickOut()
             if (self.clawedItem!=None):
                 # do something
-                self.clawStickSpeed = - math.fabs(self.clawStickSpeed)
+                self.clawStickSpeed=-math.fabs(self.clawStickSpeed)
 
             elif ((self.clawedItem==None) and 
                 (self.clawStickSpeed>0)):
                 self.clawedItem = self.whichItemClawed(currPrecious)
-            return value
+                return value
 
     # check and return the item that clawed
     # if None iterm is clawed, return none
@@ -367,6 +398,7 @@ class Claw(object):
         for precious in currPrecious:
             for item in precious:
                 if self.isclawContacted(item):
+                    print("the current clawed",item)
                     return item
         return None
 
@@ -397,9 +429,6 @@ class Claw(object):
         dist = (point[0]-item.x)**2 + (point[1]-item.y)**2
         dist = math.sqrt(dist)
         return (dist<item.radius)
-
-
-
 
 
 

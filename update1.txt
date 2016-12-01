@@ -1,0 +1,15 @@
+
+update1
+
+1 The score mode of the game basically can work right now.
+  1) After run the game, go to the ScoreMode by mouse click. 
+  2) The golds, rocks, miner, claw are properly displayed. 
+  3) With the arrow key “down”, the claw can be stick out and get the gold and rock. 
+  4) The score can be updated based on the clawed item. The behavior of gold is mostly good. But the rock cannot be erased even after been collected back.
+  5) After running out of time, the mode will freeze.
+
+2 document update:
+  1) use ScoreMode as an object
+  2) the claw has its own object
+  3) the object of gold and rock are almost done, the object of diamond and rats still need more work. 
+

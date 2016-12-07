@@ -5,12 +5,15 @@ time sheet:20, November, Sunday:       2 pm - 9pm :           •learn and p
 	•after finish all levels, should be able to show some final information
 	 resize the gold
 	 speed change according to the clawed item
-	o when game finished, should be able to add new record if qualifiedtotal time by now: 59 hours7, December, Wednesday
-	11:00am-
+	o when game finished, should be able to add new record if qualified7, December, Wednesday
+	11:00am-13:30pm
 	
 	o fix small bugs in mouse generating
 	o fix bugs in level transformation
 	o modify the background picture to adjust the miner position
+	o player name input and display in realtime
+	o record update
+
 	
 	
 
@@ -18,6 +21,24 @@ time sheet:20, November, Sunday:       2 pm - 9pm :           •learn and p
 
 
 
+7, December, Wednesday
+	14:00am-15:20pm
+	o adjust detail and font and display location
+	o 
+	
 
 
-	•to do	o the transition screen should have access to shopping mode	o if player choose to go to shopping mode, the player's data and progress should be stored and can be retrived	o add the walking gesture of rats 
+
+total time by now: 62 hours
+
+
+7, December, Wednesday
+	17:00pm- 
+	o create shopping mode
+	o display picture and return button
+
+
+
+
+	•to do	o the transition screen should have access to shopping mode	o if player choose to go to shopping mode, the player's data and progress should be stored and can be retrieved	o add the walking gesture of rats	o help mode
+	o the shinning gold at the start screen 

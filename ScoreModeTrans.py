@@ -22,7 +22,9 @@ class ScoreModeTrans(object):
         self.textX1, self.textY1 = self.width/2, self.height/2 -90
         self.textX2, self.textY2 = self.textX1, self.textY1 + 40
         self.textX3, self.textY3 = self.textX1, self.textY2 + 40
-        self.playerName = None
+        self.playerName = ""
+        self.defaultName = "42"
+        self.breakRecord = False
 
     def helpTimerFired(self, data):
         pass
@@ -42,32 +44,48 @@ class ScoreModeTrans(object):
     # draw the transitory screen
     def redrawAll(self, canvas, data):
         self.drawBackground(canvas)
-        self.createText(canvas, data)
+        if self.breakRecord==False:
+            if ((self.isPreAccomplished) and (self.currLevel<4)):
+                self.drawEnterNextLevel(canvas)
+            elif (self.currLevel<4):
+                self.drawFailRestart(canvas)
+            elif ((self.currLevel == 4) and (self.isPreAccomplished)):
+                if data.record.isInRecord(self.currScore):
+                    self.breakRecord = True
+        else:
+            self.drawEnterRecord(canvas)
+
+
+    def drawEnterRecord(self, canvas):
+        text1 = "You are one of top players!" 
+        text2 = "Please Leave Your Name"
+        text3 = "Name: __________"
+        self.drawText(canvas, text1, text2, text3)
+        text4 = self.playerName
+        textX4 = self.textX3 + 20
+        textY4 = self.textY3
+        canvas.create_text(textX4, textY4, text=text4,
+                           font = "Corbel 30 bold", fill = "Green" )
+
 
     def drawBackground(self, canvas):
         canvas.create_image(self.width/2, self.height/2, 
                             image=self.background)
 
-    def createText(self, canvas, data):
-        # display different information based on 
-        # the previous level
+    def drawEnterNextLevel(self, canvas):
+        text1 = "Congrats! You enter next level!"
+        text2 = "Press  P to play next level!"
+        text3 = "Press  R to restart!"
+        self.drawText(canvas, text1, text2, text3)
 
-        if ((self.isPreAccomplished) and (self.currLevel<4)):
-            text1 = "Congrats! You enter next level!"
-            text2 = "Press  P to play next level!"
-            text3 = "Press  R to restart!"
-        elif (self.currLevel<4):
-            text1 = "You didn't reach the goal!"
-            text2 = "Press  R to restart!"
-            text3 = "Press  H for help!"
-        elif ((self.currLevel == 4) and (self.isPreAccomplished)):
-            if data.record.isInRecord(self.currScore):
-                # do something
-                pass
-            else:
-                text1 = "Congrats! You've finished all levels!"
-                text2 = "Carpe Diem!"
-                text3 = "Now Do your homework!!!"
+    def drawFailRestart(self, canvas):
+        text1 = "You didn't reach the goal!"
+        text2 = "Press  R to restart!"
+        text3 = "Press  H for help!"
+        self.drawText(canvas, text1, text2, text3)
+
+ 
+    def drawText(self, canvas, text1, text2, text3):
 
         canvas.create_text(self.textX1, self.textY1, text = text1, 
                             font="Corbel 30", fill = "yellow")
@@ -75,17 +93,6 @@ class ScoreModeTrans(object):
                             font="Corbel 30", fill = "yellow")
         canvas.create_text(self.textX3, self.textY3, text = text3, 
                             font="Corbel 30", fill = "yellow")
-
-
-
-
-
-
-
-
-
-
-
 
 
 

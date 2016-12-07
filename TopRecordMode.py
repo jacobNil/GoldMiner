@@ -22,7 +22,6 @@ class RecordMode(object):
         self.background = PhotoImage(
                     file="image/record/recordbackground800.gif")
 
-
     """
     The readFile() and writeFile() functions below are from course 
     page of 15112
@@ -38,7 +37,6 @@ class RecordMode(object):
         records = []
         for line in fileContet.splitlines():
             if (line == ""): continue
-
             record = []
             for word in line.split():
                 record.append(word)
@@ -53,7 +51,7 @@ class RecordMode(object):
                 f.write(contents)
 
         contentsToWrite = ""
-        for record in records:
+        for record in self.records:
             line = ""
             for item in record:
                 if (len(line) == 0):
@@ -64,27 +62,35 @@ class RecordMode(object):
         writeFile(self.path, contentsToWrite)
 
     # check if a new score is good enough to be included
-    def isInRecord(self, record):
-        
-        pass
+    def isInRecord(self, score):
+        # when records number <5
+        currRecordNum = len(self.records)
+        if (currRecordNum<self.maxRecordNum):
+            return True
+        # records are full, compare with existing records
+        minRecord = int(self.records[currRecordNum-1][1])
+        if (score > minRecord):
+            return True
+        return False
 
-
-
+    # use button object to create button for record display
     def createRecordButtons(self):
         height, width = self.height, self.width
         # the size of button is decided by the icon
         buttonHeight = 67
         buttonWidth = 240 
         numOfRecord = len(self.records)
-        margin = (self.height-numOfRecord*buttonHeight-150)/(numOfRecord+1)
+        totalMargin = self.height-numOfRecord*buttonHeight-150
+        margin =totalMargin/(numOfRecord+1)
 
         for i in range(numOfRecord):
             x0 = width/2-buttonWidth/2
             y0 = i*buttonHeight + (i+1)*margin
             x1 = width/2+buttonWidth/2
             y1 = (i+1)*buttonHeight + (i+1)*margin
-            rank = i +1
-            text = str(rank)+" "+self.records[i][0]+": "+self.records[i][1]
+            rank = i+1
+            text =(str(rank)+" "+self.records[i][0]+": "+
+                                self.records[i][1])
             button = Button(x0, y0, x1, y1, None, text)
             self.buttons.append(button)
 
@@ -98,9 +104,28 @@ class RecordMode(object):
             button.drawButton(canvas, motioPosn)
 
     # control method: help key pressed
-    def recordModeHelpKeyPressed(self, event, data):
+    def helpKeyPressed(self, event, data):
         if event.keysym == "r":
             data.mode = data.splashScreen
+
+    def organizeRecord(self):
+        recordsNum = len(self.records)
+        lastRecordScore = self.records[recordsNum-1][1]
+
+        for i in range(recordsNum):
+            if int(self.records[i][1])<int(lastRecordScore):
+                break
+        if (i < recordsNum-1):
+            lastRecord=[self.records[recordsNum-1]]
+            self.records=(self.records[:i]+
+                            lastRecord+self.records[i:-1])
+        length = min(5, len(self.records))
+        self.records = self.records[:length]
+
+        print(self.records)
+
+
+
 
 
         

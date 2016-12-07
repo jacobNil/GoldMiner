@@ -5,6 +5,7 @@ from Precious import Precious, Gold, Rock, Diamond, Rat, RatWithDiamond
 from Claw import Claw
 from ScoreMode import ScoreMode
 from TopRecordMode import RecordMode
+from HelpMode import HelpMode
 import random, string
 
 #from PIL import Image, ImageTk
@@ -29,9 +30,7 @@ def init(data):
     data.helpMode = "Help"
     data.shopMode = "Shopping"
     data.scoreModeTrans = "scoreModeTransition"
-
     data.originalMode = data.splashScreen # the strat mode
-
     # the splash screen
     data.mode = data.splashScreen
     data.score = 0
@@ -65,17 +64,17 @@ def mousePressed(event, data):
 
     elif (data.mode == data.scoreMode):   pass
     elif (data.mode == data.recordMode):  pass
-    elif (data.mode == data.helpMode):    helpMousePressed(event, data)
+    elif (data.mode == data.helpMode):    data.game.helpMousePressed(event, data)
     elif (data.mode == data.shopMode):    shopModeMousePressed(event, data)
 
 def keyPressed(event, data):
     if (data.mode == data.splashScreen): splashScreenKeyPressed(event, data)
     elif (data.mode == data.scoreMode):  data.game.helpKeyPressed(event, data)
-    elif (data.mode == data.recordMode):   pass
-    elif (data.mode == data.helpMode):   helpKeyPressed(event, data)
+    elif (data.mode == data.recordMode): data.record.helpKeyPressed(event, data)
+    elif (data.mode == data.helpMode):   data.game.helpKeyPressed(event, data)
     elif (data.mode == data.shopMode):   shopModeKeyPressed(event, data)
     elif (data.mode == data.scoreModeTrans):
-        scoreModeTransHelpKeyPressed(event, data)
+        transHelpKeyPressed(event, data)
 
 def mouseMotion(event, canvas, data):
     data.motionPosn = (event.x, event.y)
@@ -94,7 +93,7 @@ def redrawAll(canvas, data):
     if (data.mode == data.splashScreen): splashScreenRedrawAll(canvas, data)
     elif (data.mode == data.scoreMode):  data.game.drawScoreMode(canvas)
     elif (data.mode == data.recordMode):   data.record.drawRecord(canvas, data.motionPosn)
-    elif (data.mode == data.helpMode):   helpRedrawAll(canvas, data)
+    elif (data.mode == data.helpMode):   data.game.helpRedrawAll(canvas, data)
     elif (data.mode == data.shopMode):   shopModeRedrawAll(canvas, data)
     elif (data.mode == data.scoreModeTrans): 
         data.game.drawScoreModeTrans(canvas, data)
@@ -109,51 +108,40 @@ def redrawAll(canvas, data):
 # object of score Mode game, but the object ScoreMode and the 
 # object ScoreModeTrans cannot import each other. So i have to use
 # helper function for now
-def scoreModeTransHelpKeyPressed(event, data):
-    if data.game.isPreAccomplished:
-        if event.keysym == "p":
-            level = data.game.currLevel
-            score = data.game.currScore
-            print("level, score=", level, score)
-            data.game = ScoreMode(level=level+1, score=score)
-            data.mode = data.scoreMode
-                
-    if event.keysym == "h":
-        data.mode = data.helpMode
-    if event.keysym == "r":
-        init(data)
+def transHelpKeyPressed(event, data):
+    # when didn't reach th record level
+    if (not data.game.breakRecord):
+        if data.game.isPreAccomplished:
+            if event.keysym == "p":
+                level = data.game.currLevel
+                score = data.game.currScore
+                print("level, score=", level, score)
+                data.game = ScoreMode(level=level+1, score=score)
+                data.mode = data.scoreMode
+        if event.keysym == "h":
+            data.mode = data.helpMode
+        if event.keysym == "r":
+            init(data)
+    # when reach the record leve
+    else:
+        transNameType(event, data)
+
+def transNameType(event, data):
+    if ((event.keysym=="Return") or 
+        (len(data.game.playerName)>=8)):
+
+        score = str(data.game.currScore)
+        if data.game.playerName == "":
+            data.game.playerName = data.game.defaultName
+        data.record.records.append([data.game.playerName, score])
+        data.record.organizeRecord()
+        data.record.saveRecordsToFile()
+        data.mode = data.recordMode
+
+    else:
+        data.game.playerName += event.keysym
 
 
-
-####################################
-# playGame: "cleanMode"
-####################################
-
-def cleanModeMousePressed(event, data):
-    data.score = 0
-
-def cleanModeKeyPressed(event, data):
-    if (event.keysym == 'h'):
-        data.originalMode = data.mode
-        data.mode = data.helpMode
-    elif (event.keysym == "r"):
-        data.mode = data.splashScreen
-        init(data)
-
-def cleanModeTimerFired(data):
-
-    data.score += 1
-
-def cleanModeRedrawAll(canvas, data):
-
-    canvas.create_text(data.width/2, data.height/2-10,
-                       text="Score = " + str(data.score), font="Arial 20")
-    canvas.create_text(data.width/2, data.height/2+15,
-                       text="this is score mode", font="Arial 20")
-    canvas.create_text(data.width/2, data.height/2+40,
-                       text="Press 'h' for help!", font="Arial 20")
-    canvas.create_text(data.width/2, data.height/2+60,
-                       text="Press 'r' to reset!", font="Arial 20")
 
 ####################################
 # splashScreen mode
@@ -180,6 +168,7 @@ def splashScreenKeyPressed(event, data):
         data.game = ScoreMode()
     elif event.keysym == "h":
         data.mode = data.helpMode
+        data.game = HelpMode()
 
 def splashScreenTimerFired(data):
     pass
@@ -188,7 +177,6 @@ def splashScreenRedrawAll(canvas, data):
     data.splashImage = PhotoImage(file="image/splash/splash1.gif")
     canvas.create_image(0, 0, anchor = NW, image=data.splashImage)
 
-    
     for button in data.splashScreenButton:
         button.drawButton(canvas, data.motionPosn)
 

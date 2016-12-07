@@ -13,20 +13,23 @@ class Claw(object):
     def __init__(self, startX, startY, width, height):
         self.handStartX, self.handStartY = startX, startY
         self.width, self.height = width, height
-        self.currAngle = math.pi*3/2
-        self.minAngle, self.maxAngle = math.pi*13/12, math.pi*23/12
+        currAngleFraction = 3/2
+        self.currAngle = math.pi*currAngleFraction
+        minFract, maxFract = 13/12, 23/12
+        self.minAngle, self.maxAngle = math.pi*minFract, math.pi*maxFract
         self.angleSpeed = math.pi/48
         self.initHandLength = 30
         self.handLength = self.initHandLength
-        self.handEndX = self.handStartX-math.cos(self.currAngle)*self.handLength
-        self.handEndY = self.handStartY-math.sin(self.currAngle)*self.handLength
-
-        self.clawLaneLength = 15
-        self.lenDifference = 5 # the difference between 2 states
+        self.handEndX = (self.handStartX - 
+                        math.cos(self.currAngle)*self.handLength)
+        self.handEndY = (self.handStartY - 
+                        math.sin(self.currAngle)*self.handLength)
+        self.clawLaneLength = 12
+        self.lenDifference = 4 # the difference between 2 states
         self.fingerLength = 10
         self.isClawStickOut = False
-        self.clawStickSpeed = 18
-
+        self.clawOriginalSpeed = 18
+        self.clawStickSpeed = self.clawOriginalSpeed
         # about the dectect point of the claw
         self.finger1StartX = None
         self.finger1StartY = None
@@ -150,7 +153,14 @@ class Claw(object):
         # check if the claw got something, 
         # if it does, retract immediately
         if ((self.clawedItem!=None) and (self.clawStickSpeed>0)):
-            self.clawStickSpeed = -self.clawStickSpeed
+            # the speed should be adjusted according to item
+            if (isinstance(self.clawedItem, Rock) or 
+                isinstance(self.clawedItem, Gold)):
+
+                self.clawStickSpeed = (-self.clawStickSpeed+
+                            4*(self.clawedItem.index+1))
+                print("current speed1=", self.clawStickSpeed)
+
 
         #print("self.clawedItem", self.clawedItem)
         #print("self.clawStickSpeed", self.clawStickSpeed)
@@ -160,8 +170,10 @@ class Claw(object):
         # then retract
         if (self.clawStickSpeed > 0):
             speed = self.clawStickSpeed
-            if ((self.handEndX<0) or (self.handEndX>self.width-speed) or
-                (self.handEndY<0+speed) or (self.handEndY>self.height-speed)):
+            if ((self.handEndX<0) or 
+                (self.handEndX>self.width-speed) or
+                (self.handEndY<0+speed)or
+                (self.handEndY>self.height-speed)):
                 self.clawStickSpeed = -self.clawStickSpeed   
         else: 
             if self.handLength < self.initHandLength:
@@ -172,8 +184,8 @@ class Claw(object):
                     if (self.clawedItem!=None):
                         value = self.clawedItem.value
                     self.clawedItem = None
-                    print("the current clawed=", self.clawedItem)
-                    self.clawStickSpeed = -self.clawStickSpeed
+                    #print("the current clawed=", self.clawedItem)
+                    self.clawStickSpeed = self.clawOriginalSpeed
                     return value
 
     ##############################################
@@ -185,9 +197,15 @@ class Claw(object):
 
         else: # when the claw is out
             value = self.clawStickOut()
-            if (self.clawedItem!=None):
-                # do something
-                self.clawStickSpeed=-math.fabs(self.clawStickSpeed)
+            if ((self.clawedItem!=None) and 
+                (self.clawStickSpeed>0)):
+                if (isinstance(self.clawedItem, Rock) or 
+                isinstance(self.clawedItem, Gold)):
+                    self.clawStickSpeed=(-math.fabs(self.clawStickSpeed)+
+                                         3*(self.clawedItem.index+1))
+                    print("current speed2=", self.clawStickSpeed)
+                else: 
+                    self.clawStickSpeed=-math.fabs(self.clawStickSpeed)
 
             elif ((self.clawedItem==None) and 
                 (self.clawStickSpeed>0)):
@@ -200,7 +218,7 @@ class Claw(object):
         for precious in currPrecious:
             for item in precious:
                 if self.isclawContacted(item):
-                    print("the current clawed",item)
+                    #print("the current clawed",item)
                     return item
         return None
 
@@ -233,5 +251,4 @@ class Claw(object):
         return (dist<item.radius)
 
 
-         
-            
+          

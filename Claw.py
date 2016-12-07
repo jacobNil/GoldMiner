@@ -26,23 +26,19 @@ class Claw(object):
                         math.sin(self.currAngle)*self.handLength)
         self.clawLaneLength = 12
         self.lenDifference = 4 # the difference between 2 states
-        self.fingerLength = 10
+        self.fingerLength = 8
         self.isClawStickOut = False
         self.clawOriginalSpeed = 18
         self.clawStickSpeed = self.clawOriginalSpeed
         # about the dectect point of the claw
         self.finger1StartX = None
         self.finger1StartY = None
-        self.finger1EndX = None
-        self.finger1EndY = None
+        self.finger1EndX, self.finger1EndY = None,None
         self.finger2StartX = None
         self.finger2StartY = None
-        self.finger2EndX = None
-        self.finger2EndY = None
+        self.finger2EndX, self.finger2EndY = None,None
         # about claw behavior
-        self.isClawed = False
-        self.clawedItem = None
-
+        self.isClawed,self.clawedItem = False,None
 
     ##############################################################
     # draw method
@@ -135,7 +131,6 @@ class Claw(object):
             elif isinstance(self.clawedItem, Rat):
                 self.clawedItem.drawRat(canvas)
             
-
     ##############################################################
     # claw behavior
     ##############################################################
@@ -233,7 +228,7 @@ class Claw(object):
         detect3X = self.handEndX
         detect3Y = self.handEndY
 
-        clawDetectPoint = [ (detect1X, detect1Y), 
+        clawDetectPoint =  [(detect1X, detect1Y), 
                             (detect2X, detect2Y),
                             (detect3X, detect3Y)]
         #print("detectpoint=", clawDetectPoint)

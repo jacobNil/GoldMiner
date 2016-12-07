@@ -97,7 +97,7 @@ def redrawAll(canvas, data):
     elif (data.mode == data.helpMode):   helpRedrawAll(canvas, data)
     elif (data.mode == data.shopMode):   shopModeRedrawAll(canvas, data)
     elif (data.mode == data.scoreModeTrans): 
-        data.game.drawScoreModeTrans(canvas)
+        data.game.drawScoreModeTrans(canvas, data)
 
 
 

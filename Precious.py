@@ -180,9 +180,8 @@ class Diamond(object):
         self.x=random.randint(self.lBound, self.rBound)
         self.y=random.randint(self.upBound, self.loBound)
         self.value = 500 # the value of dianmond
-        self.radius = 10 # need to be modified
-        imageNum = 2
-        self.image = [None]*imageNum
+        self.radius = 12 # need to be modified
+        self.image = [None]
         self.loadImage()
 
     def loadImage(self):
@@ -198,7 +197,7 @@ class Diamond(object):
     def isOverlapped(self, other):
         for precious in other:
             for item in precious:
-                if ((self.x-item.x)**2 + (self.y-item.y)**2 
+                if ((self.x-item.x)**2+(self.y-item.y)**2 
                     < (self.radius+item.radius)**2):
                     return True
         return False

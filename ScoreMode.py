@@ -12,38 +12,31 @@ class ScoreMode(object):
     ##########################################
     # constructor and its helper method
     ##########################################
-    def __init__(self, level=1, score=0, 
+    def __init__(self, level=2, score=5000, 
                  width=800, height=600):
         self.level = level
         self.score = score
         self.isAccomplished = False
-        self.goal = [500, 1000, 2500]
+        self.goal = [500, 1000, 2500, 4500]
         self.width, self.height = width, height
         # for time control
-        self.timeRemaining = 60 # 60 senconds for each level
+        self.timeRemaining = 10 # 60 senconds for each level
         self.msTime = 10
         # draw miner
         self.miner = Miner()
         # basic kinds of things underground
         self.groundLineY = 100
-        self.ground = [None]*3
-
-
-        self.ground[0] = PhotoImage(file="image/ScoreMode/background1.gif")
-        self.ground[1] = PhotoImage(file="image/ScoreMode/background2.gif")
-        self.ground[2] = PhotoImage(file="image/ScoreMode/background3.gif")
-
+        self.ground = [None]*4
+        self.loadGroundImage()
         self.golds = []
         self.rocks = []
         self.diamonds = []
         self.rats = []
         self.allPrecious = [self.golds, self.rocks, 
                             self.diamonds, self.rats]
-
         self.directory = dict()
         self.updataDirectiory()
         self.generateUnderground()
-
         # the miner is on the top center of the screen
         self.minerX, self.minerY = self.width/2, self.height/8
         self.minerR = 40
@@ -52,7 +45,11 @@ class ScoreMode(object):
         self.claw = Claw(self.minerX, self.minerY+10, 
                          self.width, self.height)
         
-
+    def loadGroundImage(self):
+        self.ground[0] = PhotoImage(file="image/ScoreMode/background1.gif")
+        self.ground[1] = PhotoImage(file="image/ScoreMode/background2n.gif")
+        self.ground[2] = PhotoImage(file="image/ScoreMode/background3n.gif")
+        self.ground[3] = PhotoImage(file="image/ScoreMode/background3n.gif")
         
     # use list to define the underground precious types and #
     # by using dictionary
@@ -78,12 +75,13 @@ class ScoreMode(object):
                             (3, 2, 2, 0),
                             3,
                             2,
+                            2
                             ] 
         # fourth level
         self.directory[4] =[(3, 2, 0, 1),
                             (3, 0, 2, 0),
                             3,
-                            6,
+                            4,
                             4] 
     # generate underground things for different level
     # according to the directory
@@ -117,7 +115,7 @@ class ScoreMode(object):
         for i in range(ratNum):
             self.rats.append(Rat())
         # generate rat with diamond
-        for i in range(ratNum):
+        for i in range(RatWithDiamondNum):
             self.rats.append(RatWithDiamond())
 
     ##########################################

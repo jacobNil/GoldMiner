@@ -33,7 +33,7 @@ class Button(object):
         textX = (self.x0 + self.x1) / 2
         textY = (self.y0 + self.y1) / 2
         canvas.create_text(textX, textY, text = self.text, 
-                                font = "Corbel 26 bold", fill = "yellow")
+                                font = "Helvetica 26", fill = "yellow")
 
     def clickInButton(self, x, y):
         if ((x > self.x0) and (x < self.x1) and 

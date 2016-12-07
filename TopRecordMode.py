@@ -65,6 +65,7 @@ class RecordMode(object):
 
     # check if a new score is good enough to be included
     def isInRecord(self, record):
+        
         pass
 
 

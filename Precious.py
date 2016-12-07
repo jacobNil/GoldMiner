@@ -48,6 +48,15 @@ class Precious(object):
             (self.y == other.y)):
             return True
         return False
+
+    # avoid the overlapping with other precious underground
+    def isOverlapped(self, other):
+        for precious in other:
+            for item in precious:
+                if ((self.x-item.x)**2 + (self.y-item.y)**2 
+                    < (self.radius+item.radius)**2):
+                    return True
+        return False
     def drawPrecious(self, canvas):
         self.loadImage()
         for i in range(len(self.image)):
@@ -102,6 +111,7 @@ class Gold(Precious):
         
         return "the gold is on (%d, %d)" %(self.x, self.y)
 
+
 ####################################################################
 ### the rocks underground
 ####################################################################
@@ -154,39 +164,115 @@ class Rock(Precious):
 ####################################################################
 
 class Diamond(object):
-    def __init__(self, index=0, width = 800, height0 = 300, height1 = 600):
+    def __init__(self, index=0, width = 800, height = 600):
         # the coordinates should be random
-        self.x = random.randint(0, width)
-        self.y = random.randint(height0, height1)
+        self.margin = 50
+        self.width, self.height = width, height
+        self.lBound = self.margin
+        self.rBound = self.width-self.margin
+        self.upBound = self.margin*6
+        self.loBound = self.height-self.margin
+        self.x=random.randint(self.lBound, self.rBound)
+        self.y=random.randint(self.upBound, self.loBound)
         self.value = 500 # the value of dianmond
         self.radius = 10 # need to be modified
+        self.image = [None]*2
+        self.loadImage()
+
+    def loadImage(self):
+        self.image[0] = PhotoImage(file="image/diamond/diamond1.gif")
+
 
     def drawDiamond(self, canvas):
         # load picture and display here
-        pass
+        radius = self.radius
+        canvas.create_image(self.x, self.y, image=self.image[0])
+        
+    # detect if the precious is overlapped with other precious
+    def isOverlapped(self, other):
+        for precious in other:
+            for item in precious:
+                if ((self.x-item.x)**2 + (self.y-item.y)**2 
+                    < (self.radius+item.radius)**2):
+                    return True
+        return False
 
 ####################################################################
 ### moving rats 
 ####################################################################
 
 class Rat(object):
-    def __init__(self, startX, startY, endX):
+    def __init__(self, startX=50, startY=300, endX=550, endY=450):
+        # define the possible range of start position
+        self.travelDistance = random.randint(250, 450)
         self.startX, self.startY = startX, startY
-        self.endX, self.endY = endX, startY
-        self.speed = random.randint(5, 10)
-        self.currX, self.currY = self.startX, self.startY
+        self.endX, self.endY = endX, endY
+        direction = random.choice([-1, 1])
+        self.speed = direction*random.randint(5, 10)
+        self.x = random.randint(startX, endX) 
+        self.y = random.randint(startY, endY)
+        # the moving range of the rat
+        self.leftRange = self.x-self.travelDistance/2
+        self.rightRange = self.x+self.travelDistance/2
+
+        # this properties cannot be directly inherited by 
+        # other different kinds of rats
         self.value = 2
-        self.radius = 10
+        self.radius = 18
+        self.image = [None]*2
+        self.loadImage()
+
+    def loadImage(self):
+
+        self.image[0] = PhotoImage(file="image/rat/rat40r.gif")
+        self.image[1] = PhotoImage(file="image/rat/rat40l.gif")
 
     # the moving method of the rat
     def movingAround(self):
-        self.startX += self.speed
-        if ((self.currX>self.endX) or (self.currX < self.endX)):
-            self.speed -= self.speed
+        self.x += self.speed
+        if ((self.x>=self.rightRange) or (self.x <= self.leftRange)):
+            self.x -= self.speed
+            self.speed = -self.speed
+            print("position of rat", self.x)
+            print("speed", self.speed)
 
     def drawRat(self, canvas):
-        # draw rats here
-        pass
+        # load picture and display here
+        radius = self.radius
+        # get the moving direction of the rats and load image 
+        # accordingly
+        if (self.speed > 0):
+            image = self.image[0]
+        else:
+            image = self.image[1]
+
+        canvas.create_image(self.x, self.y, image=image)
+        #canvas.create_oval(self.x-radius, self.y-radius, 
+                            #self.x+radius, self.y+radius)
+
+    def __repr__(self):
+        return ("the mouse is in %d, %d" %(self.x, self.y))
+
+
+
+####################################################################
+### moving rats with diamonds
+####################################################################
+# a subclass, inherit from class Rat.
+# The difference is the image and value
+class RatWithDiamond(Rat):
+    def __init__(self):
+        super().__init__(startX=200, startY=300, endX=600)
+
+        self.value = 602 # the value is the sum of rat and diamond
+        self.radius = 18
+        self.image = [None]*2
+        self.loadImage()
+
+    def loadImage(self):
+        self.image[0] = PhotoImage(file="image/rat/ratDiamond40r.gif")
+        self.image[1] = PhotoImage(file="image/rat/ratDiamond40l.gif")
+
 
 
 

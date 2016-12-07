@@ -1,12 +1,14 @@
 
 from tkinter import *
-from objects import Button
-from Precious import Precious, Gold, Rock
-
+from Button import Button
+from Precious import Precious, Gold, Rock, Diamond, Rat, RatWithDiamond
+from Claw import Claw
 from ScoreMode import ScoreMode
+from TopRecordMode import RecordMode
 import random, string
 
 #from PIL import Image, ImageTk
+# the Tkinter template control is from 15112 course website. 
 
 def rgbString(red, green, blue):
     return "#%02x%02x%02x" % (red, green, blue)
@@ -23,7 +25,7 @@ def init(data):
     # the mode control
     data.splashScreen = "splash Screen"
     data.scoreMode = "Score Mode"
-    data.timeMode = "Time Mode"
+    data.recordMode = "Record Mode"
     data.helpMode = "Help"
     data.shopMode = "Shopping"
     data.scoreModeTrans = "scoreModeTransition"
@@ -34,20 +36,25 @@ def init(data):
     data.mode = data.splashScreen
     data.score = 0
     margin = data.height/9
-    scoreButton = Button(width/2, margin, width*4/5, 2*margin, 
+    scoreButton = Button(width/20, margin, width*7/20, 2*margin, 
                         "yellow", "Score Mode")
-    timeButton = Button(width/2, 3*margin, width*4/5, 4*margin, 
-                        "yellow", "Time Mode")
-    shoppingButton = Button(width/2, 5*margin, width*4/5, 6*margin, 
+    recordButton = Button(width/20, 3*margin, width*7/20, 4*margin, 
+                        "yellow", "Top Record")
+    shoppingButton = Button(width/20, 5*margin, width*7/20, 6*margin, 
                         "yellow", "Shopping")
-    helpButton = Button (width/2, 7*margin, width*4/5, 8*margin, 
+    helpButton = Button (width/20, 7*margin, width*7/20, 8*margin, 
                         "yellow", "Help")
+    data.motionPosn = (600, 600)
 
-    data.splashScreenButton = [scoreButton, timeButton, 
+    data.splashScreenButton = [scoreButton, recordButton, 
                                shoppingButton, helpButton]
     data.splashImage = None
 
     data.game = None
+
+    data.record = RecordMode()
+
+    
 
 ####################################
 # mode dispatcher
@@ -57,24 +64,27 @@ def mousePressed(event, data):
     if (data.mode == data.splashScreen):  splashScreenMousePressed(event, data)
 
     elif (data.mode == data.scoreMode):   pass
-    elif (data.mode == data.timeMode):    cleanModeMousePressed(event, data)
+    elif (data.mode == data.recordMode):  pass
     elif (data.mode == data.helpMode):    helpMousePressed(event, data)
     elif (data.mode == data.shopMode):    shopModeMousePressed(event, data)
 
 def keyPressed(event, data):
     if (data.mode == data.splashScreen): splashScreenKeyPressed(event, data)
     elif (data.mode == data.scoreMode):  data.game.helpKeyPressed(event, data)
-    elif (data.mode == data.timeMode):   cleanModeKeyPressed(event, data)
+    elif (data.mode == data.recordMode):   pass
     elif (data.mode == data.helpMode):   helpKeyPressed(event, data)
     elif (data.mode == data.shopMode):   shopModeKeyPressed(event, data)
     elif (data.mode == data.scoreModeTrans):
         scoreModeTransHelpKeyPressed(event, data)
 
+def mouseMotion(event, canvas, data):
+    data.motionPosn = (event.x, event.y)
+    #print("the mouse is in:", data.motionPosn)
 
 def timerFired(data):
     if (data.mode == data.splashScreen): splashScreenTimerFired(data)
     elif (data.mode == data.scoreMode):  data.game.helpTimerFired(data)
-    elif (data.mode == data.timeMode):   cleanModeTimerFired(data)
+    elif (data.mode == data.recordMode): pass
     elif (data.mode == data.helpMode):   helpTimerFired(data)
     elif (data.mode == data.shopMode):   shopModeTimerFired(data)
     elif (data.mode == data.scoreModeTrans): 
@@ -83,7 +93,7 @@ def timerFired(data):
 def redrawAll(canvas, data):
     if (data.mode == data.splashScreen): splashScreenRedrawAll(canvas, data)
     elif (data.mode == data.scoreMode):  data.game.drawScoreMode(canvas)
-    elif (data.mode == data.timeMode):   cleanModeRedrawAll(canvas, data)
+    elif (data.mode == data.recordMode):   data.record.drawRecord(canvas, data.motionPosn)
     elif (data.mode == data.helpMode):   helpRedrawAll(canvas, data)
     elif (data.mode == data.shopMode):   shopModeRedrawAll(canvas, data)
     elif (data.mode == data.scoreModeTrans): 
@@ -99,13 +109,13 @@ def redrawAll(canvas, data):
 # object of score Mode game, but the object ScoreMode and the 
 # object ScoreModeTrans cannot import each other. So i have to use
 # helper function for now
-# ????!!!!!but this need to be worked on!!!!!!!!!!!
 def scoreModeTransHelpKeyPressed(event, data):
     if data.game.isPreAccomplished:
         if event.keysym == "p":
             level = data.game.currLevel
             score = data.game.currScore
-            data.game = ScoreMode(level+1, score)
+            print("level, score=", level, score)
+            data.game = ScoreMode(level=level+1, score=score)
             data.mode = data.scoreMode
                 
     if event.keysym == "h":
@@ -163,7 +173,7 @@ def splashScreenMousePressed(event, data):
 
 def splashScreenKeyPressed(event, data):
     if event.keysym == "t" :
-        data.mode = data.timeMode
+        data.mode = data.recordMode
         
     elif event.keysym == "s":
         data.mode = data.scoreMode
@@ -175,12 +185,12 @@ def splashScreenTimerFired(data):
     pass
 
 def splashScreenRedrawAll(canvas, data):
-    data.splashImage = PhotoImage(file="image/splash/splash.gif")
+    data.splashImage = PhotoImage(file="image/splash/splash1.gif")
     canvas.create_image(0, 0, anchor = NW, image=data.splashImage)
 
     
     for button in data.splashScreenButton:
-        button.drawButton(canvas)
+        button.drawButton(canvas, data.motionPosn)
 
 ####################################
 # playGame: "shopping"
@@ -275,6 +285,8 @@ def run(width=300, height=300):
                             mousePressedWrapper(event, canvas, data))
     root.bind("<Key>", lambda event:
                             keyPressedWrapper(event, canvas, data))
+    canvas.bind("<Motion>", lambda event:
+                            mouseMotion(event, canvas, data))
     timerFiredWrapper(canvas, data)
     # and launch the app
     

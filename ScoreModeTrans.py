@@ -27,16 +27,15 @@ class ScoreModeTrans(object):
 
     def helpTimerFired(self, data):
         pass
-
+    """
     def helpKeyPressed(self, event, data):
         if self.isPreAccomplished:
             if event.keysym == "p":
-                pass
-                
         if event.keysym == "h":
             data.mode = data.helpMode
         if event.keysym == "r":
             init(data)
+    """
 
     def drawScoreModeTrans(self, canvas):
         self.redrawAll(canvas)
@@ -52,14 +51,19 @@ class ScoreModeTrans(object):
     def createText(self, canvas):
         # display different information based on 
         # the previous level
-        if self.isPreAccomplished:
+        if ((self.isPreAccomplished) and (self.currLevel<4)):
             text1 = "Congrats! You enter next level!"
             text2 = "Press  P to play next level!"
             text3 = "Press  R to restart!"
-        else:
+        elif (self.currLevel<4):
             text1 = "You didn't reach the goal!"
             text2 = "Press  R to restart!"
             text3 = "Press  H for help!"
+        elif ((self.currLevel == 4) and (self.isAccomplished)):
+            text1 = "Congrats! You have finished all levels!"
+            text2 = "Carpe Diem!"
+            text3 = "Go and finish your homework!!! Right Now!"
+
 
         canvas.create_text(self.textX1, self.textY1, text = text1, 
                             font="Corbel 30", fill = "yellow")

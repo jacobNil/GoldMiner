@@ -72,10 +72,10 @@ class Precious(object):
 Gold:
 * 4 different kinds gold:
                 value         size         speed
-    * gold0:    50*2^0=50     40*36        50
-    * gold1:    50*2^1=100    70*63        40
-    * gold2:    50*2^2=200    100*89       30
-    * gold3:    50*2^3=400    130*116      20
+    * gold0:    50*2^0=50     30*27        50
+    * gold1:    50*2^1=100    50*45        40
+    * gold2:    50*2^2=200    60*53        30
+    * gold3:    50*2^3=400    80*71        20
 * the value and the moving speed when get clawed
   can be calculate from the index of the gold
 * the position of the gold is randomly distributed underground
@@ -87,16 +87,18 @@ class Gold(Precious):
 
         # the larger the index, the higher the value, 
         # the lower the speed in dragging
-        self.radius = (40+self.index*30)/2
-        self.value = 50*2**self.index
-        self.speed = (50 - self.index*10)
+        radiusBase = 30
+        radiusUnit = 16
+        valueUnit = 50
+        self.radius = (radiusBase+self.index*radiusUnit)/2
+        self.value = valueUnit*2**self.index
         self.loadImage()
 
     def loadImage(self):
-        self.image[0] = PhotoImage(file="image/gold/gold0.gif")
-        self.image[1] = PhotoImage(file="image/gold/gold1.gif")
-        self.image[2] = PhotoImage(file="image/gold/gold2.gif")
-        self.image[3] = PhotoImage(file="image/gold/gold3.gif")
+        self.image[0] = PhotoImage(file="image/gold/gold30.gif")
+        self.image[1] = PhotoImage(file="image/gold/gold50.gif")
+        self.image[2] = PhotoImage(file="image/gold/gold60.gif")
+        self.image[3] = PhotoImage(file="image/gold/gold80.gif")
 
     # draw the object
     def drawGold(self, canvas):
@@ -134,9 +136,11 @@ class Rock(Precious):
         super().__init__(index)
         # the larger the index, the higher the value, 
         # the lower the speed in dragging
-        self.value = 5*2*self.index
-        self.speed = (50-self.index*10)
-        self.radius = 20+self.index*5
+        valueUnit = 5
+        self.value = valueUnit*2*self.index
+        radiusUnit = 5
+        radiusBase = 20
+        self.radius = radiusBase+self.index*radiusUnit
         self.loadImage()
 
 
@@ -170,13 +174,15 @@ class Diamond(object):
         self.width, self.height = width, height
         self.lBound = self.margin
         self.rBound = self.width-self.margin
-        self.upBound = self.margin*6
+        marginNum = 6
+        self.upBound = self.margin*marginNum
         self.loBound = self.height-self.margin
         self.x=random.randint(self.lBound, self.rBound)
         self.y=random.randint(self.upBound, self.loBound)
         self.value = 500 # the value of dianmond
         self.radius = 10 # need to be modified
-        self.image = [None]*2
+        imageNum = 2
+        self.image = [None]*imageNum
         self.loadImage()
 
     def loadImage(self):
@@ -204,11 +210,13 @@ class Diamond(object):
 class Rat(object):
     def __init__(self, startX=50, startY=300, endX=550, endY=450):
         # define the possible range of start position
-        self.travelDistance = random.randint(250, 450)
+        minTravelDist, maxTravelDist = 250, 450
+        self.travelDistance=random.randint(minTravelDist, maxTravelDist)
         self.startX, self.startY = startX, startY
         self.endX, self.endY = endX, endY
         direction = random.choice([-1, 1])
-        self.speed = direction*random.randint(5, 10)
+        maxSpeed, minSpeed = 10, 5
+        self.speed = direction*random.randint(minSpeed, maxSpeed)
         self.x = random.randint(startX, endX) 
         self.y = random.randint(startY, endY)
         # the moving range of the rat
@@ -219,7 +227,8 @@ class Rat(object):
         # other different kinds of rats
         self.value = 2
         self.radius = 18
-        self.image = [None]*2
+        imageNum = 2
+        self.image = [None]*imageNum
         self.loadImage()
 
     def loadImage(self):
@@ -233,8 +242,8 @@ class Rat(object):
         if ((self.x>=self.rightRange) or (self.x <= self.leftRange)):
             self.x -= self.speed
             self.speed = -self.speed
-            print("position of rat", self.x)
-            print("speed", self.speed)
+            #print("position of rat", self.x)
+            #print("speed", self.speed)
 
     def drawRat(self, canvas):
         # load picture and display here
@@ -249,7 +258,6 @@ class Rat(object):
         canvas.create_image(self.x, self.y, image=image)
         #canvas.create_oval(self.x-radius, self.y-radius, 
                             #self.x+radius, self.y+radius)
-
     def __repr__(self):
         return ("the mouse is in %d, %d" %(self.x, self.y))
 
@@ -266,7 +274,8 @@ class RatWithDiamond(Rat):
 
         self.value = 602 # the value is the sum of rat and diamond
         self.radius = 18
-        self.image = [None]*2
+        imageNum = 2
+        self.image = [None]*imageNum
         self.loadImage()
 
     def loadImage(self):

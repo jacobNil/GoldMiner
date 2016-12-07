@@ -104,7 +104,3 @@ class RecordMode(object):
 
         
 
-
-
-
-

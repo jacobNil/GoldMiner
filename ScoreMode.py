@@ -136,7 +136,7 @@ class ScoreMode(object):
             data.game = ScoreModeTrans(self.isAccomplished, self.score, self.level)
         for rat in self.rats:
             rat.movingAround()
-            print(rat)
+            #print(rat)
 
         # time control and display
         self.msTime -= 1

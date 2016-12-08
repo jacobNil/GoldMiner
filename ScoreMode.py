@@ -12,15 +12,15 @@ class ScoreMode(object):
     ##########################################
     # constructor and its helper method
     ##########################################
-    def __init__(self, level=1, score=0, 
-                 width=800, height=600):
+    def __init__(self, level=1, score=600, 
+                 width=800, height=600, changeUnit=4):
         self.level = level
         self.score = score
         self.isAccomplished = False
         self.goal = [500, 1000, 2500, 4500]
         self.width, self.height = width, height
         # for time control
-        self.timeRemaining = 60 # 60 senconds for each level
+        self.timeRemaining = 20 # 60 senconds for each level
         self.msTime = 10
         # draw miner
         self.miner = Miner()
@@ -42,8 +42,10 @@ class ScoreMode(object):
         self.minerR = 40
         # draw the claw and other related feature
         # the claw can rotate from 210 digree to 330 digree
+        self.clawChangeUnit = changeUnit
+        print("scoreMode changeunit", changeUnit)
         self.claw = Claw(self.minerX, self.minerY+10, 
-                         self.width, self.height)
+                         self.width, self.height, changeUnit=changeUnit)
         
     def loadGroundImage(self):
         self.ground[0] = PhotoImage(file="image/ScoreMode/background1.gif")

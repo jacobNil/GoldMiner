@@ -1,5 +1,6 @@
 
 ## basically the button for splash screen
+# size of button :  240 by 67
 
 from tkinter import *
 from Precious import Rock, Gold
@@ -15,11 +16,18 @@ class Button(object):
         self.color = color
         self.text = text
         self.name = text
-        self.regularImage = PhotoImage(
-                    file="image/button/emptyButton240.gif")
-        self.highlightImage = PhotoImage(
-                    file="image/button/emptyButtonHigh240.gif")
+        if (self.x1-self.x0 > 200):
+            self.regularImage = PhotoImage(
+                        file="image/button/emptyButton240.gif")
+            self.highlightImage = PhotoImage(
+                        file="image/button/emptyButtonHigh240.gif")
+        else:
+            self.regularImage = PhotoImage(
+                        file="image/button/emptyButton120.gif")
+            self.highlightImage = PhotoImage(
+                        file="image/button/emptyButtonHigh120.gif")
 
+                            # as tuple(x, y)
     def drawButton(self, canvas, motionPosn):
         # check if it's highlight
         if self.clickInButton(motionPosn[0], motionPosn[1]):
@@ -32,8 +40,13 @@ class Button(object):
 
         textX = (self.x0 + self.x1) / 2
         textY = (self.y0 + self.y1) / 2
-        canvas.create_text(textX, textY, text = self.text, 
+        if (self.x1-self.x0 > 200):
+            canvas.create_text(textX, textY, text = self.text, 
                                 font = "Helvetica 26", fill = "yellow")
+        else:
+            canvas.create_text(textX, textY, text = self.text, 
+                                font = "Helvetica 17", fill = "yellow")
+
 
     def clickInButton(self, x, y):
         if ((x > self.x0) and (x < self.x1) and 

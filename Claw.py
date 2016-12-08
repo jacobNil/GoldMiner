@@ -17,26 +17,25 @@ class Claw(object):
         currAngleFraction = 3/2
         self.currAngle = math.pi*currAngleFraction
         minFract, maxFract = 13/12, 23/12
-        self.minAngle, self.maxAngle = math.pi*minFract, math.pi*maxFract
+        self.minAngle = math.pi*minFract
+        self.maxAngle = math.pi*maxFract
         self.angleSpeed = math.pi/48
         self.initHandLength = 30
         self.handLength = self.initHandLength
         self.handEndX = (self.handStartX - 
-                        math.cos(self.currAngle)*self.handLength)
+                    math.cos(self.currAngle)*self.handLength)
         self.handEndY = (self.handStartY - 
-                        math.sin(self.currAngle)*self.handLength)
+                    math.sin(self.currAngle)*self.handLength)
         self.clawLaneLength = 12
-        self.lenDifference = 4 # the difference between 2 states
-        self.fingerLength = 8
+        # the difference between 2 states
+        self.lenDifference, self.fingerLength = 4, 8 
         self.isClawStickOut = False
         self.clawOriginalSpeed = 18
         self.clawStickSpeed = self.clawOriginalSpeed
         # about the dectect point of the claw
-        self.finger1StartX = None
-        self.finger1StartY = None
+        self.finger1StartX, self.finger1StartY = None, None
         self.finger1EndX, self.finger1EndY = None,None
-        self.finger2StartX = None
-        self.finger2StartY = None
+        self.finger2StartX, self.finger2StartY = None, None
         self.finger2EndX, self.finger2EndY = None,None
         # about claw behavior
         self.isClawed,self.clawedItem = False,None
@@ -50,61 +49,56 @@ class Claw(object):
     def drawClaw(self, canvas):
         # the claw hand can rotate from 210 digree to 330 digree
         handStartX, handStartY = self.handStartX, self.handStartY
-        currAngle = self.currAngle
-        handLength = self.handLength
+        currAngle,handLength = self.currAngle,self.handLength
         angleSpeed = self.angleSpeed
-        handEndX = (self.handStartX-
-                        math.cos(self.currAngle)*self.handLength)
-        handEndY = (self.handStartY-
-                        math.sin(self.currAngle)*self.handLength)
+        handEndX=(self.handStartX-math.cos(self.currAngle)*self.handLength)
+        handEndY=(self.handStartY-math.sin(self.currAngle)*self.handLength)
         self.handEndX, self.handEndY = handEndX, handEndY
         # the claw lane is vertical to the claw hand
-        if self.clawedItem == None:
-            clawLaneLength = self.clawLaneLength
-        else:
-            clawLaneLength = self.clawLaneLength - self.lenDifference
-        clawLaneTheta1 = currAngle+math.pi/2
-        clawLaneTheta2 = currAngle-math.pi/2
-        clawLaneStartX = handEndX-math.cos(clawLaneTheta1)*clawLaneLength
-        clawLaneStartY = handEndY-math.sin(clawLaneTheta1)*clawLaneLength
-        clawLaneEndX = handEndX-math.cos(clawLaneTheta2)*clawLaneLength
-        clawLaneEndY = handEndY-math.sin(clawLaneTheta2)*clawLaneLength
+        if self.clawedItem == None: clawLaneLength = self.clawLaneLength
+        else: clawLaneLength=self.clawLaneLength-self.lenDifference
+
+        clawLaneTheta1,clawLaneTheta2=currAngle+math.pi/2,currAngle-math.pi/2
+        clawLaneStartX = (handEndX-math.cos(clawLaneTheta1)*clawLaneLength)
+        clawLaneStartY = (handEndY-math.sin(clawLaneTheta1)*clawLaneLength)
+        clawLaneEndX = (handEndX-math.cos(clawLaneTheta2)*clawLaneLength)
+        clawLaneEndY = (handEndY-math.sin(clawLaneTheta2)*clawLaneLength)
         # the claw fingers
         # finger1 start from the clawLaneStartX, Y
         fingerLength = self.fingerLength
-        finger1StartX, finger1StartY = clawLaneStartX, clawLaneStartY
-        finger1Theta = currAngle+math.pi/6
-        finger1EndX = finger1StartX-math.cos(finger1Theta)*fingerLength
-        finger1EndY = finger1StartY-math.sin(finger1Theta)*fingerLength
+        finger1StartX,finger1StartY=clawLaneStartX,clawLaneStartY
+        finger1Theta,finger2Theta = currAngle+math.pi/6, currAngle - math.pi/6
+        finger1EndX = (finger1StartX-math.cos(finger1Theta)*fingerLength)
+        finger1EndY = (finger1StartY-math.sin(finger1Theta)*fingerLength)
         # finger1 start from the clawLaneStartX, Y        
         finger2StartX, finger2StartY = clawLaneEndX, clawLaneEndY
-        finger2Theta = currAngle - math.pi/6
-        finger2EndX = finger2StartX-math.cos(finger2Theta)*fingerLength
-        finger2EndY = finger2StartY-math.sin(finger2Theta)*fingerLength
-        self.finger1StartX = finger1StartX
-        self.finger1StartY = finger1StartY
-        self.finger1EndX = finger1EndX
-        self.finger1EndY = finger1EndY
+        finger2EndX = (finger2StartX-math.cos(finger2Theta)*fingerLength)
+        finger2EndY = (finger2StartY-math.sin(finger2Theta)*fingerLength)
+        self.finger1StartX,self.finger1StartY = finger1StartX,finger1StartY
+        self.finger1EndX,self.finger1EndY = finger1EndX,finger1EndY
+        self.finger2StartX,self.finger2StartY = finger2StartX,finger2StartY
+        self.finger2EndX,self.finger2EndY = finger2EndX,finger2EndY
 
-        self.finger2StartX = finger2StartX
-        self.finger2StartY = finger2StartY
-        self.finger2EndX = finger2EndX
-        self.finger2EndY = finger2EndY
-        # draw claow hand
-        canvas.create_line(handStartX, handStartY, handEndX, handEndY, 
-                            fill = "black", width = 2)
+        self.actualDrawClaw(canvas)
+
+
+
+    def actualDrawClaw(self, canvas):
+        # draw claow hand         
+        canvas.create_line(self.handStartX, self.handStartY, 
+                        self.handEndX, self.handEndY,fill="black", width = 2)
         # draw clawlane
-        canvas.create_line(clawLaneStartX, clawLaneStartY, 
-                            clawLaneEndX, clawLaneEndY, width=2)
+        canvas.create_line(self.finger1StartX, self.finger1StartY, 
+                            self.finger2StartX, self.finger2StartY, width=2)
         # draw 2 claw fingers
         # finger 1
-        canvas.create_line(finger1StartX, finger1StartY, 
-                            finger1EndX, finger1EndY, width=2)
+        canvas.create_line(self.finger1StartX, self.finger1StartY, 
+                            self.finger1EndX, self.finger1EndY, width=2)
         # draw the clawed item, when it was clawed
         self.drawClawedItem(canvas)
         #draw finger 2
-        canvas.create_line(finger2StartX, finger2StartY, 
-                            finger2EndX, finger2EndY, width=2)   
+        canvas.create_line(self.finger2StartX, self.finger2StartY, 
+                            self.finger2EndX, self.finger2EndY, width=2)   
 
     # draw the clawed item, when it was clawed
     def drawClawedItem(self, canvas):
@@ -153,13 +147,10 @@ class Claw(object):
             # the speed should be adjusted according to item
             if (isinstance(self.clawedItem, Rock) or 
                 isinstance(self.clawedItem, Gold)):
-
                 self.clawStickSpeed = (-self.clawStickSpeed+
-                            self.changeUnit*(self.clawedItem.index+1))
+                        self.changeUnit*(self.clawedItem.index+1))
                 #print("current speed1=", self.clawStickSpeed)
                 #print("changeUnit", self.changeUnit)
-
-
         #print("self.clawedItem", self.clawedItem)
         #print("self.clawStickSpeed", self.clawStickSpeed)
         self.handLength += self.clawStickSpeed
@@ -168,10 +159,8 @@ class Claw(object):
         # then retract
         if (self.clawStickSpeed > 0):
             speed = self.clawStickSpeed
-            if ((self.handEndX<0) or 
-                (self.handEndX>self.width-speed) or
-                (self.handEndY<0+speed)or
-                (self.handEndY>self.height-speed)):
+            if ((self.handEndX<0) or (self.handEndX>self.width-speed) or
+                (self.handEndY<0+speed)or(self.handEndY>self.height-speed)):
                 self.clawStickSpeed = -self.clawStickSpeed   
         else: 
             if self.handLength < self.initHandLength:
@@ -199,15 +188,17 @@ class Claw(object):
                 (self.clawStickSpeed>0)):
                 if (isinstance(self.clawedItem, Rock) or 
                 isinstance(self.clawedItem, Gold)):
-                    self.clawStickSpeed=(-math.fabs(self.clawStickSpeed)+
-                                         3*(self.clawedItem.index+1))
-                    print("current speed2=", self.clawStickSpeed)
+                    self.clawStickSpeed=(
+                        -math.fabs(self.clawStickSpeed)+
+                                    3*(self.clawedItem.index+1))
+                    #print("current speed2=", self.clawStickSpeed)
                 else: 
-                    self.clawStickSpeed=-math.fabs(self.clawStickSpeed)
+                    self.clawStickSpeed=(
+                            -math.fabs(self.clawStickSpeed))
 
             elif ((self.clawedItem==None) and 
                 (self.clawStickSpeed>0)):
-                self.clawedItem = self.whichItemClawed(currPrecious)
+                self.clawedItem=self.whichItemClawed(currPrecious)
                 return value
 
     # check and return the item that clawed

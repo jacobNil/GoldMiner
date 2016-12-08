@@ -6,7 +6,6 @@ from Button import Button
 import string, math, random
 
 
-
 # the commodities for shopping mode
 class Item(object):
     def __init__(self, x0, y0, x1, y1):
@@ -38,6 +37,7 @@ class Item(object):
         text2 = "next level. The Drink only lasts for one level"
         textX1, textY1 = 400, 500
         textX2, textY2 = 400, 535
+
         canvas.create_text(textX1, textY1, text= text1, fill="yellow",
                             font= "Corbel 27")
         canvas.create_text(textX2, textY2, text= text2, fill="yellow",
@@ -65,10 +65,17 @@ class PowerDrink(Item):
         self.loadImage()
 
     def loadImage(self):
-        self.image[0]=PhotoImage(file=
-                        "image/item/powerDrink120.gif")
-        self.image[1]=PhotoImage(file=
-                        "image/item/powerDrinkHighlight120.gif")        
+        if (self.x1-self.x0>100):
+            self.image[0]=PhotoImage(file=
+                            "image/item/powerDrink120.gif")
+            self.image[1]=PhotoImage(file=
+                            "image/item/powerDrinkHighlight120.gif")        
+        else:
+            self.image[0]=PhotoImage(file=
+                            "image/item/powerDrink40.gif")
+            self.image[1]=PhotoImage(file=
+                            "image/item/powerDrinkHighlight40.gif")        
+
 
 
 

@@ -209,12 +209,12 @@ class Diamond(object):
 class Rat(object):
     def __init__(self, startX=50, startY=300, endX=550, endY=450):
         # define the possible range of start position
-        minTravelDist, maxTravelDist = 250, 450
+        minTravelDist, maxTravelDist = 250, 550
         self.travelDistance=random.randint(minTravelDist, maxTravelDist)
         self.startX, self.startY = startX, startY
         self.endX, self.endY = endX, endY
         direction = random.choice([-1, 1])
-        maxSpeed, minSpeed = 10, 5
+        maxSpeed, minSpeed = 13, 5
         self.speed = direction*random.randint(minSpeed, maxSpeed)
         self.x = random.randint(startX, endX) 
         self.y = random.randint(startY, endY)

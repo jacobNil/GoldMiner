@@ -23,8 +23,7 @@ def rgbString(red, green, blue):
 def init(data):
     # There is only one init, not one-per-mode
     # the interface dimensions
-    width = data.width
-    height = data.height
+    width,height = data.width, data.height
     # the mode control
     data.splashScreen = "splash Screen"
     data.scoreMode = "Score Mode"
@@ -40,24 +39,16 @@ def init(data):
     scoreButton = Button(width/20, margin, width*7/20, 2*margin, 
                         "yellow", "Score Mode")
     recordButton = Button(width/20, 3*margin, width*7/20, 4*margin, 
-                        "yellow", "Top Record")
+                        "yellow", "Record Mode")
     shoppingButton = Button(width/20, 5*margin, width*7/20, 6*margin, 
                         "yellow", "Shopping")
     helpButton = Button (width/20, 7*margin, width*7/20, 8*margin, 
                         "yellow", "Help")
     data.motionPosn = (600, 600)
-
-    data.splashScreenButton = [scoreButton, recordButton, 
-                               shoppingButton, helpButton]
-    data.splashImage = None
-
-    data.game = None
-
+    data.splashScreenButton=[scoreButton, recordButton,
+                             shoppingButton, helpButton]
+    data.splashImage, data.game = None, None
     data.record = RecordMode()
-
-
-
-
 
 
 ####################################
@@ -65,21 +56,29 @@ def init(data):
 ####################################
 
 def mousePressed(event, data):
-    if (data.mode == data.splashScreen):  splashScreenMousePressed(event, data)
+    if (data.mode == data.splashScreen):  
+        splashScreenMousePressed(event, data)
 
     elif (data.mode == data.scoreMode):   pass
     elif (data.mode == data.recordMode):  pass
-    elif (data.mode == data.helpMode):    data.game.helpMousePressed(event, data)
-    elif (data.mode == data.shopMode):    shopModehelpMousePressed(event, data)
+    elif (data.mode == data.helpMode):    
+        data.game.helpMousePressed(event, data)
+    elif (data.mode == data.shopMode):    
+        shopModehelpMousePressed(event, data)
     elif (data.mode == data.scoreModeTrans):
         data.game.helpMousePressed(event, data)
 
 def keyPressed(event, data):
-    if (data.mode == data.splashScreen): splashScreenKeyPressed(event, data)
-    elif (data.mode == data.scoreMode):  data.game.helpKeyPressed(event, data)
-    elif (data.mode == data.recordMode): data.record.helpKeyPressed(event, data)
-    elif (data.mode == data.helpMode):   data.game.helpKeyPressed(event, data)
-    elif (data.mode == data.shopMode):   data.game.shopModeKeyPressed(event, data)
+    if (data.mode == data.splashScreen): 
+        splashScreenKeyPressed(event, data)
+    elif (data.mode == data.scoreMode):  
+        data.game.helpKeyPressed(event, data)
+    elif (data.mode == data.recordMode): 
+        data.record.helpKeyPressed(event, data)
+    elif (data.mode == data.helpMode):   
+        data.game.helpKeyPressed(event, data)
+    elif (data.mode == data.shopMode):   
+        data.game.shopModeKeyPressed(event, data)
     elif (data.mode == data.scoreModeTrans):
         transHelpKeyPressed(event, data)
 
@@ -88,25 +87,31 @@ def mouseMotion(event, canvas, data):
     #print("the mouse is in:", data.motionPosn)
 
 def timerFired(data):
-    if (data.mode == data.splashScreen): splashScreenTimerFired(data)
-    elif (data.mode == data.scoreMode):  data.game.helpTimerFired(data)
+    if (data.mode == data.splashScreen): 
+        splashScreenTimerFired(data)
+    elif (data.mode == data.scoreMode):  
+        data.game.helpTimerFired(data)
     elif (data.mode == data.recordMode): pass
-    elif (data.mode == data.helpMode):   helpTimerFired(data)
-    elif (data.mode == data.shopMode):   pass
+    elif (data.mode == data.helpMode):   
+        helpTimerFired(data)
+    elif (data.mode == data.shopMode):   
+        shopHelpTimerFired(data)
     elif (data.mode == data.scoreModeTrans): 
         data.game.helpTimerFired(data)
 
 def redrawAll(canvas, data):
-    if (data.mode == data.splashScreen): splashScreenRedrawAll(canvas, data)
-    elif (data.mode == data.scoreMode):  data.game.drawScoreMode(canvas)
-    elif (data.mode == data.recordMode):   data.record.drawRecord(canvas, data.motionPosn)
-    elif (data.mode == data.helpMode):   data.game.helpRedrawAll(canvas, data)
-    elif (data.mode == data.shopMode):   data.game.drawShopMode(canvas, data)
+    if (data.mode == data.splashScreen): 
+        splashScreenRedrawAll(canvas, data)
+    elif (data.mode == data.scoreMode):  
+        data.game.drawScoreMode(canvas, data)
+    elif (data.mode == data.recordMode):   
+        data.record.drawRecord(canvas, data.motionPosn)
+    elif (data.mode == data.helpMode):   
+        data.game.helpRedrawAll(canvas, data)
+    elif (data.mode == data.shopMode):   
+        data.game.drawShopMode(canvas, data)
     elif (data.mode == data.scoreModeTrans): 
         data.game.drawScoreModeTrans(canvas, data)
-
-
-
 
 
 
@@ -123,9 +128,11 @@ def shopModehelpMousePressed(event, data):
         nextLevel = data.game.currLevel+1
         if data.game.button.clickInButton(clickX,clickY):
             score = data.game.currScore
+
             data.mode = data.scoreMode
             if data.game.hasStrength:
-                data.game = ScoreMode(level=nextLevel, score=score, changeUnit=0)
+                data.game = ScoreMode(level=nextLevel, 
+                                score=score, changeUnit=0)
 
             else:
                 data.game = ScoreMode(level=nextLevel, score=score)
@@ -135,10 +142,11 @@ def shopModehelpMousePressed(event, data):
                 data.game.currScore-=data.game.item.value
                 score = data.game.currScore
                 data.game.hasStrength = True
-
         pass
 
 
+def shopHelpTimerFired(data):
+    pass
 
 
 ####################################
@@ -224,8 +232,10 @@ def splashScreenTimerFired(data):
     pass
 
 def splashScreenRedrawAll(canvas, data):
-    data.splashImage = PhotoImage(file="image/splash/splash1.gif")
-    canvas.create_image(0, 0, anchor = NW, image=data.splashImage)
+    data.splashImage = PhotoImage(file=
+                    "image/splash/splash1.gif")
+    canvas.create_image(0, 0, anchor = NW, 
+                    image=data.splashImage)
 
     for button in data.splashScreenButton:
         button.drawButton(canvas, data.motionPosn)
@@ -249,14 +259,18 @@ def shopModeTimerFired(data):
 
 def shopModeRedrawAll(canvas, data):
     canvas.create_text(data.width/2, data.height/2-40,
-                       text="This is a fun game!", font="Arial 26 bold")
+                       text="This is a fun game!", 
+                       font="Arial 26 bold")
     
     canvas.create_text(data.width/2, data.height/2+15,
-                       text="you can do shopping here", font="Arial 20")
+                       text="you can do shopping here", 
+                       font="Arial 20")
     canvas.create_text(data.width/2, data.height/2+40,
-                       text="Press 'h' for help!", font="Arial 20")
+                       text="Press 'h' for help!", 
+                       font="Arial 20")
     canvas.create_text(data.width/2, data.height/2+60,
-                       text="Press 'r' to reset!", font="Arial 20")
+                       text="Press 'r' to reset!", 
+                       font="Arial 20")
 
 
 ####################################
@@ -278,7 +292,8 @@ def helpRedrawAll(canvas, data):
     canvas.create_text(data.width/2, data.height/2-10,
                        text="How to play:", font="Arial 20")
     canvas.create_text(data.width/2, data.height/2+40,
-                       text="Press any key to keep playing!", font="Arial 20")
+                       text="Press any key to keep playing!", 
+                       font="Arial 20")
 
 ####################################
 # use the run function as-is

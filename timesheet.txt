@@ -29,24 +29,27 @@ time sheet:20, November, Sunday:       2 pm - 9pm :           •learn and p
 
 
 
-total time by now: 62 hours
+
 
 
 7, December, Wednesday
-	17:00pm- 
+	17:00pm-21:00pm 23:00pm-5:00am (thursday)
 	o create shopping mode
 	o display picture and return button
 	o help mode
 	o with item(powerDrink) can be purchased
 	o can enter game directly from shop by next level button
-	o 
-
-
-
-
-	•to do
+	o the power drink icon is shown in shop mode and score mode
 	o the transitory screen should include button to enter shop(need some variable to store score and level information
 	o purchase item in the level
-	o the transition screen should have access to shopping mode	o if player choose to go to shopping mode, the player's data and progress should be stored and can be retrieved	o add the walking gesture of rats
+	o in the store, power drink can be bought
+	o the transition screen should have access to shopping mode
+
+
+
+total time by now: 72 hours
+
+	•to do
+			o if player choose to go to shopping mode, the player's data and progress should be stored and can be retrieved	o add the walking gesture of rats
 	o the shinning gold at the start screen
-	o in the store, power drink can be bought 
+ 

@@ -48,10 +48,10 @@ class ScoreModeTrans(object):
 
     def helpMousePressed(self, event, data):
         if self.showShoppingButton:
-            clickX, clickY = event.x, event.y
+            clickX, clickY =event.x, event.y
             if self.shopButton.clickInButton(clickX, clickY):
                 data.mode = data.shopMode
-                data.game = ShopMode(self.currScore, self.currLevel)
+                data.game=ShopMode(self.currScore,self.currLevel)
 
     def drawScoreModeTrans(self, canvas, data):
         self.redrawAll(canvas, data)
@@ -60,11 +60,13 @@ class ScoreModeTrans(object):
     def redrawAll(self, canvas, data):
         self.drawBackground(canvas)
         if self.breakRecord==False:
-            if ((self.isPreAccomplished) and (self.currLevel<4)):
+            if ((self.isPreAccomplished) and 
+                (self.currLevel<4)):
                 self.drawEnterNextLevelAndShop(canvas, data)
             elif (self.currLevel<4):
                 self.drawFailRestart(canvas)
-            elif ((self.currLevel == 4) and (self.isPreAccomplished)):
+            elif ((self.currLevel == 4) and 
+                  (self.isPreAccomplished)):
                 if data.record.isInRecord(self.currScore):
                     self.breakRecord = True
         else:

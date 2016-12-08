@@ -25,16 +25,27 @@ class ShopMode(object):
         self.buttonX1, self.buttonY1 = 760, 75
         buttonText = "Next Level"
         self.button = Button(self.buttonX0, self.buttonY0, 
-                            self.buttonX1, self.buttonY1, "yellow", buttonText)
+                            self.buttonX1, self.buttonY1, 
+                            "yellow", buttonText)
         self.itemX0, self.itemY0= 240, 300
         self.itemX1, self.itemY1= 360, 432
-        self.item = PowerDrink(self.itemX0, self.itemY0, self.itemX1, self.itemY1)
+        self.item = PowerDrink(self.itemX0, self.itemY0, 
+                                self.itemX1, self.itemY1)
         self.hasStrength=False
+        self.angryTime = 10
+        self.shopEnded = False
+
+        self.powerIcon = PowerDrink(140,30,
+                                    200,50)
 
     def drawShopMode(self, canvas, data):
         self.drawBackground(canvas, data)
         self.owner.drawOwner(canvas, data)
         self.item.drawItem(canvas, data)
+        self.drawScore(canvas)
+        if self.hasStrength:
+            self.powerIcon.drawItem(canvas, data)
+
 
     def drawBackground(self, canvas, data):
         imageX = self.width/2
@@ -50,7 +61,6 @@ class ShopMode(object):
                 fill="red", font="Helvetica 21")
         pass
 
-    
 
     def shopModeKeyPressed(self, event, data):
         if event.keysym == "r":
@@ -58,11 +68,17 @@ class ShopMode(object):
             data.game = None
         pass
 
+        #draw score and goal of leve on the left top corner
+    def drawScore(self, canvas):
+        scoreX, scoreY = 70, 40
+      
+        moneyText = "Money = $" + str(self.currScore)
+        canvas.create_text(scoreX,scoreY,text=moneyText,fill="yellow", 
+                            font = "Corbel 20 bold")
+        
 
 
-
-
-
+# the shop owner, withe different gestures and facial expression
 class Owner(object):
     def __init__(self):
         self.angryOwner = PhotoImage(
@@ -88,19 +104,6 @@ class Owner(object):
             image = self.regularOwner[0]
 
         canvas.create_image(ownerX, ownerY, image=image)
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

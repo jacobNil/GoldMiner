@@ -3,6 +3,7 @@
 from tkinter import *
 from Precious import Gold, Rock, Diamond, Rat, RatWithDiamond
 from ScoreModeTrans import ScoreModeTrans
+from Item import Item, PowerDrink
 from Claw import Claw
 from Miner import Miner
 
@@ -12,46 +13,45 @@ class ScoreMode(object):
     ##########################################
     # constructor and its helper method
     ##########################################
-    def __init__(self, level=1, score=600, 
+    def __init__(self, level=1, score=0, 
                  width=800, height=600, changeUnit=4):
-        self.level = level
-        self.score = score
+        self.level,self.score = level, score
         self.isAccomplished = False
         self.goal = [500, 1000, 2500, 4500]
         self.width, self.height = width, height
         # for time control
-        self.timeRemaining = 20 # 60 senconds for each level
-        self.msTime = 10
+        self.timeRemaining,self.msTime = 60, 10 # 60 senconds for each level
         # draw miner
         self.miner = Miner()
         # basic kinds of things underground
         self.groundLineY = 100
         self.ground = [None]*4
         self.loadGroundImage()
-        self.golds = []
-        self.rocks = []
-        self.diamonds = []
-        self.rats = []
-        self.allPrecious = [self.golds, self.rocks, 
-                            self.diamonds, self.rats]
+        self.golds, self.rocks, self.diamonds, self.rats = [],[],[],[]
+        self.allPrecious = [self.golds, self.rocks,self.diamonds,self.rats]
         self.directory = dict()
         self.updataDirectiory()
         self.generateUnderground()
         # the miner is on the top center of the screen
         self.minerX, self.minerY = self.width/2, self.height/8
-        self.minerR = 40
+        self.minerR, self.clawChangeUnit = 40, changeUnit
         # draw the claw and other related feature
-        # the claw can rotate from 210 digree to 330 digree
-        self.clawChangeUnit = changeUnit
-        print("scoreMode changeunit", changeUnit)
-        self.claw = Claw(self.minerX, self.minerY+10, 
-                         self.width, self.height, changeUnit=changeUnit)
+        # the claw can rotate from 210 digree to 330 digree        
+        self.claw = Claw(self.minerX, self.minerY+10, self.width, self.height, 
+                         changeUnit=changeUnit)
+        self.powerIcon = PowerDrink(self.minerX+100,self.minerY-20,
+                                    self.minerX+160,self.minerY+20)
+
         
     def loadGroundImage(self):
-        self.ground[0] = PhotoImage(file="image/ScoreMode/background1.gif")
-        self.ground[1] = PhotoImage(file="image/ScoreMode/background2n.gif")
-        self.ground[2] = PhotoImage(file="image/ScoreMode/background3n.gif")
-        self.ground[3] = PhotoImage(file="image/ScoreMode/background3n.gif")
+        self.ground[0] = PhotoImage(file=
+                        "image/ScoreMode/background1.gif")
+        self.ground[1] = PhotoImage(file=
+                        "image/ScoreMode/background2n.gif")
+        self.ground[2] = PhotoImage(file=
+                        "image/ScoreMode/background3n.gif")
+        self.ground[3] = PhotoImage(file=
+                        "image/ScoreMode/background3n.gif")
         
     # use list to define the underground precious types and #
     # by using dictionary
@@ -60,10 +60,10 @@ class ScoreMode(object):
         # gold: 400*2, 200*2, 100*3, 50 *4
         # rock: 40 *1, 30*2,   20 * 2
                         #   XS  S  M  L
-        self.directory[1] =[(1, 0, 1, 1), # gold#
+        self.directory[1] =[(1, 2, 2, 1), # gold#
                             (1, 1, 1, 1), # rock#
                             0,            # diamond#
-                            2,            # rat# 
+                            1,            # rat# 
                             0]            # rat with diamond
         # second level
         self.directory[2] =[(2, 2, 2, 1),
@@ -81,7 +81,7 @@ class ScoreMode(object):
                             ] 
         # fourth level
         self.directory[4] =[(3, 2, 0, 1),
-                            (3, 0, 2, 0),
+                            (3, 2, 2, 0),
                             3,
                             4,
                             4] 
@@ -133,7 +133,8 @@ class ScoreMode(object):
                 #print("score required",self.goal[self.level-1])
 
             data.mode = data.scoreModeTrans
-            data.game = ScoreModeTrans(self.isAccomplished, self.score, self.level)
+            data.game = ScoreModeTrans(self.isAccomplished, 
+                                self.score, self.level)
         for rat in self.rats:
             rat.movingAround()
             #print(rat)
@@ -175,13 +176,15 @@ class ScoreMode(object):
     ##########################################
     # draw the background for different level
     # backgound will change from level to level
-    def drawScoreMode(self, canvas):
+    def drawScoreMode(self, canvas, data):
         self.drawBackground(canvas)
         self.drawPrecious(canvas)
         self.drawTimer(canvas)
         self.miner.drawMiner(canvas, self)
         self.claw.drawClaw(canvas)
         self.drawScore(canvas)
+        if (self.clawChangeUnit==0):
+            self.powerIcon.drawItem(canvas,data)
 
 
     def drawBackground(self, canvas):
@@ -218,8 +221,10 @@ class ScoreMode(object):
             canvas.create_rectangle(alterBoxX0, alterBoxY0, 
                                     alterBoxX1, alterBoxY1, 
                                     fill = fill, width = 0)
-        canvas.create_text(levelX,levelY, text = levelText, font = "Corbel 20 bold")
-        canvas.create_text(timeX, timeY, text = timeText, font = "Corbel 20 bold")
+        canvas.create_text(levelX,levelY, text = levelText, 
+                            font = "Corbel 20 bold")
+        canvas.create_text(timeX, timeY, text = timeText, 
+                            font = "Corbel 20 bold")
 
         
     #draw score and goal of leve on the left top corner

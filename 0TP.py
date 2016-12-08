@@ -6,6 +6,8 @@ from Claw import Claw
 from ScoreMode import ScoreMode
 from TopRecordMode import RecordMode
 from HelpMode import HelpMode
+from Shopping import ShopMode, Owner
+
 import random, string
 
 #from PIL import Image, ImageTk
@@ -53,7 +55,10 @@ def init(data):
 
     data.record = RecordMode()
 
-    
+
+
+
+
 
 ####################################
 # mode dispatcher
@@ -65,14 +70,16 @@ def mousePressed(event, data):
     elif (data.mode == data.scoreMode):   pass
     elif (data.mode == data.recordMode):  pass
     elif (data.mode == data.helpMode):    data.game.helpMousePressed(event, data)
-    elif (data.mode == data.shopMode):    shopModeMousePressed(event, data)
+    elif (data.mode == data.shopMode):    shopModehelpMousePressed(event, data)
+    elif (data.mode == data.scoreModeTrans):
+        data.game.helpMousePressed(event, data)
 
 def keyPressed(event, data):
     if (data.mode == data.splashScreen): splashScreenKeyPressed(event, data)
     elif (data.mode == data.scoreMode):  data.game.helpKeyPressed(event, data)
     elif (data.mode == data.recordMode): data.record.helpKeyPressed(event, data)
     elif (data.mode == data.helpMode):   data.game.helpKeyPressed(event, data)
-    elif (data.mode == data.shopMode):   shopModeKeyPressed(event, data)
+    elif (data.mode == data.shopMode):   data.game.shopModeKeyPressed(event, data)
     elif (data.mode == data.scoreModeTrans):
         transHelpKeyPressed(event, data)
 
@@ -85,7 +92,7 @@ def timerFired(data):
     elif (data.mode == data.scoreMode):  data.game.helpTimerFired(data)
     elif (data.mode == data.recordMode): pass
     elif (data.mode == data.helpMode):   helpTimerFired(data)
-    elif (data.mode == data.shopMode):   shopModeTimerFired(data)
+    elif (data.mode == data.shopMode):   pass
     elif (data.mode == data.scoreModeTrans): 
         data.game.helpTimerFired(data)
 
@@ -94,9 +101,43 @@ def redrawAll(canvas, data):
     elif (data.mode == data.scoreMode):  data.game.drawScoreMode(canvas)
     elif (data.mode == data.recordMode):   data.record.drawRecord(canvas, data.motionPosn)
     elif (data.mode == data.helpMode):   data.game.helpRedrawAll(canvas, data)
-    elif (data.mode == data.shopMode):   shopModeRedrawAll(canvas, data)
+    elif (data.mode == data.shopMode):   data.game.drawShopMode(canvas, data)
     elif (data.mode == data.scoreModeTrans): 
         data.game.drawScoreModeTrans(canvas, data)
+
+
+
+
+
+
+####################################
+# shope mode controller
+####################################
+
+
+def shopModehelpMousePressed(event, data):
+
+        clickX, clickY = event.x, event.y
+        # when click on the next button, go to next level or the 
+        # first level
+        nextLevel = data.game.currLevel+1
+        if data.game.button.clickInButton(clickX,clickY):
+            score = data.game.currScore
+            data.mode = data.scoreMode
+            if data.game.hasStrength:
+                data.game = ScoreMode(level=nextLevel, score=score, changeUnit=0)
+
+            else:
+                data.game = ScoreMode(level=nextLevel, score=score)
+        elif data.game.item.isInItem((clickX, clickY)):
+            if ((data.game.currScore-data.game.item.value)>0 and
+                (data.game.hasStrength== False)):
+                data.game.currScore-=data.game.item.value
+                score = data.game.currScore
+                data.game.hasStrength = True
+
+        pass
+
 
 
 
@@ -154,21 +195,30 @@ def splashScreenMousePressed(event, data):
     for button in data.splashScreenButton:
         if button.clickInButton(x, y) == True:
             data.mode = button.name
-            data.game = ScoreMode(width=data.width, 
-                                  height=data.height)
+            if data.mode==data.scoreMode:
+                data.game = ScoreMode(width=data.width, 
+                                    height=data.height)
+            elif data.mode==data.recordMode:
+                data.game = RecordMode()
+            elif data.mode==data.helpMode:
+                data.game=HelpMode()
+            elif data.mode == data.shopMode:
+                data.game=ShopMode()
             #print(button)
             break
 
 def splashScreenKeyPressed(event, data):
     if event.keysym == "t" :
         data.mode = data.recordMode
-        
     elif event.keysym == "s":
         data.mode = data.scoreMode
         data.game = ScoreMode()
     elif event.keysym == "h":
         data.mode = data.helpMode
         data.game = HelpMode()
+    elif event.keysym == "b":
+        data.mode = data.shopMode
+        data.game = ShopMode()
 
 def splashScreenTimerFired(data):
     pass

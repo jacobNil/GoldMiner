@@ -36,9 +36,17 @@ total time by now: 62 hours
 	17:00pm- 
 	o create shopping mode
 	o display picture and return button
+	o help mode
+	o with item(powerDrink) can be purchased
+	o can enter game directly from shop by next level button
+	o 
 
 
 
 
-	•to do	o the transition screen should have access to shopping mode	o if player choose to go to shopping mode, the player's data and progress should be stored and can be retrieved	o add the walking gesture of rats	o help mode
-	o the shinning gold at the start screen 
+	•to do
+	o the transitory screen should include button to enter shop(need some variable to store score and level information
+	o purchase item in the level
+	o the transition screen should have access to shopping mode	o if player choose to go to shopping mode, the player's data and progress should be stored and can be retrieved	o add the walking gesture of rats
+	o the shinning gold at the start screen
+	o in the store, power drink can be bought 

@@ -10,9 +10,10 @@ import string, math, random
 ##################################################################
 
 class Claw(object):
-    def __init__(self, startX, startY, width, height):
+    def __init__(self, startX, startY, width, height, changeUnit=4):
         self.handStartX, self.handStartY = startX, startY
         self.width, self.height = width, height
+        self.changeUnit = changeUnit
         currAngleFraction = 3/2
         self.currAngle = math.pi*currAngleFraction
         minFract, maxFract = 13/12, 23/12
@@ -39,6 +40,7 @@ class Claw(object):
         self.finger2EndX, self.finger2EndY = None,None
         # about claw behavior
         self.isClawed,self.clawedItem = False,None
+
 
     ##############################################################
     # draw method
@@ -153,8 +155,9 @@ class Claw(object):
                 isinstance(self.clawedItem, Gold)):
 
                 self.clawStickSpeed = (-self.clawStickSpeed+
-                            4*(self.clawedItem.index+1))
-                print("current speed1=", self.clawStickSpeed)
+                            self.changeUnit*(self.clawedItem.index+1))
+                #print("current speed1=", self.clawStickSpeed)
+                #print("changeUnit", self.changeUnit)
 
 
         #print("self.clawedItem", self.clawedItem)

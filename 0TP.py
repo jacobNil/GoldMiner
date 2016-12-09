@@ -164,7 +164,7 @@ def transHelpKeyPressed(event, data):
             if event.keysym == "p":
                 level = data.game.currLevel
                 score = data.game.currScore
-                print("level, score=", level, score)
+                #print("level, score=", level, score)
                 data.game = ScoreMode(level=level+1, score=score)
                 data.mode = data.scoreMode
         if event.keysym == "h":

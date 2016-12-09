@@ -34,9 +34,8 @@ class ShopMode(object):
         self.hasStrength=False
         self.angryTime = 10
         self.shopEnded = False
-
-        self.powerIcon = PowerDrink(140,30,
-                                    200,50)
+        x0, y0, x1, y1 = 140, 30, 200, 50
+        self.powerIcon = PowerDrink(x0,y0,x1,y1)
 
     def drawShopMode(self, canvas, data):
         self.drawBackground(canvas, data)
@@ -94,7 +93,7 @@ class Owner(object):
         #position of owner
         ownerX = 630
         ownerY = 335
-        print(data.motionPosn)
+        #print(data.motionPosn)
         # the state of onner is randomly chosed
         stateDecider = 0.8
         state = random.random()

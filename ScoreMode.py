@@ -24,8 +24,8 @@ class ScoreMode(object):
         # draw miner
         self.miner = Miner()
         # basic kinds of things underground
-        self.groundLineY = 100
-        self.ground = [None]*4
+        self.groundLineY, num = 100, 4
+        self.ground = [None]*num
         self.loadGroundImage()
         self.golds, self.rocks, self.diamonds, self.rats = [],[],[],[]
         self.allPrecious = [self.golds, self.rocks,self.diamonds,self.rats]
@@ -39,8 +39,9 @@ class ScoreMode(object):
         # the claw can rotate from 210 digree to 330 digree        
         self.claw = Claw(self.minerX, self.minerY+10, self.width, self.height, 
                          changeUnit=changeUnit)
-        self.powerIcon = PowerDrink(self.minerX+100,self.minerY-20,
-                                    self.minerX+160,self.minerY+20)
+        distX1,distX2,distY = 100, 160, 20
+        self.powerIcon = PowerDrink(self.minerX+distX1,self.minerY-distY,
+                                    self.minerX+distX2,self.minerY+distY)
 
         
     def loadGroundImage(self):
@@ -209,14 +210,16 @@ class ScoreMode(object):
     def drawTimer(self, canvas):
         timeX, timeY = 750, 55
         levelX, levelY = 750, 30
-        alterBoxX0, alterBoxY0 = timeX+22, timeY-5
-        alterBoxX1, alterBoxY1 = timeX+38, timeY+8
+        distX1, distY1 = 22, 5
+        distX2, distY2 = 38, 8
+        alterBoxX0, alterBoxY0 = timeX+distX1, timeY-distY1
+        alterBoxX1, alterBoxY1 = timeX+distX2, timeY+distY2
         timeText = "Time = " + str(self.timeRemaining) 
         levelText = "Level = " + str(self.level)
         if self.timeRemaining < 10:
             if self.timeRemaining%2==0:
                 fill = "light blue"
-            else: fill = "white"
+            else: fill = "yellow"
             # the blingbling box on time
             canvas.create_rectangle(alterBoxX0, alterBoxY0, 
                                     alterBoxX1, alterBoxY1, 

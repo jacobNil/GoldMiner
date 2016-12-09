@@ -122,7 +122,7 @@ class RecordMode(object):
         length = min(5, len(self.records))
         self.records = self.records[:length]
 
-        print(self.records)
+        #print(self.records)
 
 
 

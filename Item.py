@@ -28,7 +28,7 @@ class Item(object):
             self.drawTextBoutPower(canvas)
         else:
             image = self.image[0]
-        print("item", imageX,imageY)
+        #print("item", imageX,imageY)
 
         canvas.create_image(imageX, imageY, image=image)
 

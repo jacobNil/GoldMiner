@@ -47,7 +47,9 @@ def init(data):
     data.motionPosn = (600, 600)
     data.splashScreenButton=[scoreButton, recordButton,
                              shoppingButton, helpButton]
-    data.splashImage, data.game = None, None
+    data.imageCount, data.imageNum = 0, 7
+    data.splashImage, data.game = [None]*data.imageNum, None
+    loadSplashImage(data)
     data.record = RecordMode()
 
 
@@ -69,7 +71,10 @@ def mousePressed(event, data):
         data.game.helpMousePressed(event, data)
 
 def keyPressed(event, data):
-    if (data.mode == data.splashScreen): 
+    if event.keysym == "w":
+        data.mode = data.scoreMode
+        data.game = ScoreMode(level=4, score=5000, changeUnit=0, time=10)
+    elif (data.mode == data.splashScreen): 
         splashScreenKeyPressed(event, data)
     elif (data.mode == data.scoreMode):  
         data.game.helpKeyPressed(event, data)
@@ -231,11 +236,22 @@ def splashScreenKeyPressed(event, data):
 def splashScreenTimerFired(data):
     pass
 
+def loadSplashImage(data):
+    data.splashImage[0]=PhotoImage(file="image/splash/splash0.gif")
+    data.splashImage[1]=PhotoImage(file="image/splash/splash1.gif")
+    data.splashImage[2]=PhotoImage(file="image/splash/splash2.gif")
+    data.splashImage[3]=PhotoImage(file="image/splash/splash3.gif")
+    data.splashImage[4]=PhotoImage(file="image/splash/splash2.gif")
+    data.splashImage[5]=PhotoImage(file="image/splash/splash1.gif")
+    data.splashImage[6]=PhotoImage(file="image/splash/splash0.gif")
+
 def splashScreenRedrawAll(canvas, data):
-    data.splashImage = PhotoImage(file=
-                    "image/splash/splash1.gif")
+    index = (data.imageCount//2)%data.imageNum
+    image = data.splashImage[index]
+    data.imageCount+=1
+    
     canvas.create_image(0, 0, anchor = NW, 
-                    image=data.splashImage)
+                    image=image)
 
     for button in data.splashScreenButton:
         button.drawButton(canvas, data.motionPosn)

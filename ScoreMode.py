@@ -14,13 +14,13 @@ class ScoreMode(object):
     # constructor and its helper method
     ##########################################
     def __init__(self, level=1, score=0, 
-                 width=800, height=600, changeUnit=4):
+                 width=800, height=600, changeUnit=4, time=60):
         self.level,self.score = level, score
         self.isAccomplished = False
         self.goal = [500, 1000, 2500, 4500]
         self.width, self.height = width, height
         # for time control
-        self.timeRemaining,self.msTime = 60, 10 # 60 senconds for each level
+        self.timeRemaining,self.msTime = time, 10 # 60 senconds for each level
         # draw miner
         self.miner = Miner()
         # basic kinds of things underground

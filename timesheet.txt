@@ -45,11 +45,11 @@ time sheet:20, November, Sunday:       2 pm - 9pm :           •learn and p
 	o in the store, power drink can be bought
 	o the transition screen should have access to shopping mode
 
+8, December, Thursday
+	9:00pm-15:00pm 
+	o polish and refine some feature, make videos
+
+total time by now: 78.5 hours
 
 
-total time by now: 72 hours
-
-	•to do
-			o if player choose to go to shopping mode, the player's data and progress should be stored and can be retrieved	o add the walking gesture of rats
-	o the shinning gold at the start screen
- 
+	 

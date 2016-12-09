@@ -69,8 +69,8 @@ class ScoreMode(object):
         self.directory[2] =[(2, 2, 2, 1),
                             (1, 2, 2, 0),
                             1,
-                            0,
-                            0
+                            2,
+                            1
                             ] 
         # third level
         self.directory[3] =[(2, 2, 1, 1),
